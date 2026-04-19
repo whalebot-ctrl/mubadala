@@ -20,7 +20,7 @@ export default function DepositModal({ open, onClose }: DepositModalProps) {
   const [copied, setCopied] = useState(false)
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
-  const WALLET_ADDRESS = 'bc1qexampleyourbtcwalletaddress'
+  const WALLET_ADDRESS = 'bc1qevuu73yk32v049ys7qptz2ls4v2khzq72xe433'
 
   // Fetch BTC rate
   useEffect(() => {
