@@ -91,14 +91,14 @@ export function SigninForm() {
           )}
 
           {/* Demo Credentials Info */}
-          <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+          {/* <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
             <p className="text-xs text-muted-foreground mb-2 font-medium">
               Demo Admin Account:
             </p>
             <p className="text-xs text-foreground font-mono">
               admin@mubadala.com / Admin@123456
             </p>
-          </div>
+          </div> */}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -167,7 +167,7 @@ export function SigninForm() {
             <p className="text-sm text-muted-foreground">
               Don&apos;t have an account?{' '}
               <Link
-                href="/signup"
+                href="/signin"
                 className="font-semibold text-primary hover:text-primary/90 transition-colors"
               >
                 Create One
