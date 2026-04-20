@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { ClerkProvider } from '@clerk/nextjs' // 1. Import the provider
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -42,11 +43,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="bg-background">
-      <body className="font-sans antialiased bg-background text-foreground">
-        {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
-      </body>
-    </html>
+    /* 2. Wrap everything inside ClerkProvider */
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning className="bg-background">
+        <body className="font-sans antialiased bg-background text-foreground">
+          {children}
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

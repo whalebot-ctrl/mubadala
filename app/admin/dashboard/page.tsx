@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+// 1. Import Clerk hooks and components
+import { useUser, UserButton } from '@clerk/nextjs' 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
-  LogOut,
   Plus,
   Check,
   X,
@@ -29,7 +30,9 @@ interface User {
 
 export default function AdminDashboard() {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
+  // 2. Get user data from Clerk
+  const { isLoaded, isSignedIn, user } = useUser() 
+
   const [users, setUsers] = useState<User[]>([])
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [error, setError] = useState('')
@@ -46,37 +49,17 @@ export default function AdminDashboard() {
     role: 'investor',
   })
 
+  // 3. Security Gate: Use Clerk instead of localStorage
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Check if user is admin from localStorage
-        const storedUser = localStorage.getItem('user')
-        if (!storedUser) {
-          router.push('/signin')
-          return
-        }
-
-        const user = JSON.parse(storedUser)
-        if (user.role !== 'admin') {
-          router.push('/dashboard')
-          return
-        }
-
-        // Load users from localStorage
-        const storedUsers = localStorage.getItem('all_users')
-        if (storedUsers) {
-          setUsers(JSON.parse(storedUsers))
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error)
+    if (isLoaded) {
+      if (!isSignedIn) {
         router.push('/signin')
-      } finally {
-        setIsLoading(false)
+      } else if (user?.publicMetadata?.role !== 'admin') {
+        // If logged in but NOT an admin, send them to the user dashboard
+        router.push('/dashboard')
       }
     }
-
-    checkAuth()
-  }, [router])
+  }, [isLoaded, isSignedIn, user, router])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -89,32 +72,16 @@ export default function AdminDashboard() {
     setSuccess('')
 
     try {
-      // Validate form
       if (!formData.email || !formData.password || !formData.fullName || !formData.phoneNumber || !formData.country) {
         setError('All fields are required')
         return
       }
 
-      if (formData.password.length < 8) {
-        setError('Password must be at least 8 characters')
-        return
-      }
-
-      // Call API to create user
+      // Now that Clerk is active, this request will send the Clerk token automatically
       const response = await fetch('/api/admin/create-user', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          fullName: formData.fullName,
-          phoneNumber: formData.phoneNumber,
-          country: formData.country,
-          role: formData.role,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       })
 
       const data = await response.json()
@@ -124,127 +91,63 @@ export default function AdminDashboard() {
         return
       }
 
-      // Add to local users list for display
-      const newUser: User = {
-        id: data.user.id,
-        email: data.user.email,
-        fullName: data.user.fullName,
-        role: data.user.role,
-        kycStatus: data.user.kycStatus,
-        accountBalance: 0,
-      }
-
-      const updatedUsers = [...users, newUser]
-      setUsers(updatedUsers)
-
-      setSuccess(`User ${formData.fullName} created successfully!
-Email: ${formData.email}
-Password: ${formData.password}
-Status: Ready to login`)
-
-      // Reset form
-      setFormData({
-        email: '',
-        password: '',
-        fullName: '',
-        phoneNumber: '',
-        country: '',
-        role: 'investor',
-      })
-
-      setTimeout(() => {
-        setShowCreateForm(false)
-        setSuccess('')
-      }, 4000)
+      // Logic to add to your list (Clerk will store them in its dashboard too)
+      setUsers(prev => [...prev, data.user])
+      setSuccess(`User created! View them in your Clerk Dashboard.`)
+      setFormData({ email: '', password: '', fullName: '', phoneNumber: '', country: '', role: 'investor' })
+      setTimeout(() => setShowCreateForm(false), 3000)
     } catch (err) {
-      setError('Failed to create user')
-      console.error(err)
+      setError('Connection failed. Check your API route.')
     }
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('user')
-    router.push('/signin')
-  }
-
-  if (isLoading) {
+  // 4. Loading State
+  if (!isLoaded) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4" />
-          <p className="text-muted-foreground">Loading admin panel...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600 mb-4" />
+          <p className="text-muted-foreground font-bold tracking-widest uppercase text-[10px]">Verifying Authority...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-border/40 bg-white/80 backdrop-blur-sm">
+    <div className="min-h-screen bg-background text-slate-900">
+      <nav className="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <img src="/mubadala-logo.svg" alt="Mubadala" className="h-5 w-auto" />
-              <span className="font-bold text-foreground hidden sm:inline">Admin</span>
+          <div className="flex justify-between items-center h-20">
+            <Link href="/" className="flex items-center gap-3">
+              <img src="/mubadala-logo.svg" alt="Mubadala" className="h-6 w-auto" />
+              <span className="font-black text-xl tracking-tighter uppercase">Admin Terminal</span>
             </Link>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="text-destructive hover:bg-destructive/10"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
+            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-6">
+              {/* 5. Replace manual logout with UserButton */}
+              <div className="flex items-center gap-3 pr-4 border-r border-slate-100">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin Access</p>
+                <p className="text-xs font-bold text-sky-600">{user?.primaryEmailAddress?.emailAddress}</p>
+              </div>
+              <UserButton />
             </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+            </div>
           </div>
-
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-border/40 py-4">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-destructive hover:bg-destructive/10"
-                onClick={handleLogout}
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
-            </div>
-          )}
         </div>
       </nav>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex justify-between items-start mb-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-              Admin Dashboard
-            </h1>
-            <p className="text-muted-foreground">
-              Manage users and verify KYC submissions
-            </p>
+            <h1 className="text-5xl font-black tracking-tight text-slate-900 mb-2">Central Command</h1>
+            <p className="text-slate-500 font-medium text-lg italic">"Welcome back, {user?.firstName}."</p>
           </div>
           <Button
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-2"
+            className="bg-sky-600 hover:bg-sky-700 text-white font-black px-8 py-6 rounded-2xl shadow-lg shadow-sky-100 transition-all hover:scale-105 active:scale-95"
             onClick={() => setShowCreateForm(!showCreateForm)}
           >
-            <Plus className="w-4 h-4" />
-            Create User
+            <Plus className="w-5 h-5 mr-2" /> Initialize New Account
           </Button>
         </div>
 
