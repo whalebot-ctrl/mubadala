@@ -1,12 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// 1. Ensure these paths are exactly what you use in your app
+// Define which routes do NOT require a login
 const isPublicRoute = createRouteMatcher([
   '/', 
   '/signin(.*)', 
   '/signup(.*)',
-  '/api/auth(.*)', // <--- CRITICAL: Allow Clerk to talk to itself
-  '/api/webhook(.*)' // If you use webhooks later
+  '/api/auth(.*)', // <--- This allows the sign-in POST request to work
+  '/api/public(.*)'
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
@@ -16,6 +16,6 @@ export default clerkMiddleware(async (auth, request) => {
 });
 
 export const config = {
-  // This matcher is standard, but ensure it's here
+  // This tells Next.js which files to run the middleware on
   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 };
