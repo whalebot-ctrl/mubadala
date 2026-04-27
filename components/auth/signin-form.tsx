@@ -103,7 +103,7 @@ export function SigninForm() {
           )}
 
           {/* Client Login Hint */}
-          <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+          {/* <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
             <div className="flex items-center gap-2 mb-2 text-primary font-bold text-xs uppercase tracking-widest">
               <User className="w-3 h-3" />
               Client Access (Demo)
@@ -116,7 +116,7 @@ export function SigninForm() {
                 <span className="text-muted-foreground">Pass:</span> {DEMO_USER.password}
               </p>
             </div>
-          </div>
+          </div> */}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
