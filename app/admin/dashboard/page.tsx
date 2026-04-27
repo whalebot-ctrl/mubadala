@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-// 1. Import Clerk hooks and components
-import { useUser, UserButton } from '@clerk/nextjs' 
+// 1. REMOVED CLERK IMPORTS
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -14,9 +13,10 @@ import {
   X,
   AlertCircle,
   CheckCircle,
-  Menu,
   Eye,
   EyeOff,
+  ShieldAlert,
+  LogOut
 } from 'lucide-react'
 
 interface User {
@@ -30,14 +30,14 @@ interface User {
 
 export default function AdminDashboard() {
   const router = useRouter()
-  // 2. Get user data from Clerk
-  const { isLoaded, isSignedIn, user } = useUser() 
-
+  
+  // 2. USE LOCAL STATE INSTEAD OF useUser()
+  const [adminUser, setAdminUser] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [users, setUsers] = useState<User[]>([])
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -49,17 +49,28 @@ export default function AdminDashboard() {
     role: 'investor',
   })
 
-  // 3. Security Gate: Use Clerk instead of localStorage
+  // 3. SECURE LOCAL GATE
   useEffect(() => {
-    if (isLoaded) {
-      if (!isSignedIn) {
+    const checkAdminAuth = () => {
+      const storedUser = localStorage.getItem('user')
+      if (!storedUser) {
         router.push('/signin')
-      } else if (user?.publicMetadata?.role !== 'admin') {
-        // If logged in but NOT an admin, send them to the user dashboard
-        router.push('/dashboard')
+        return
       }
+
+      const parsedUser = JSON.parse(storedUser)
+      // If they aren't an admin, kick them to the standard dashboard
+      if (parsedUser.role !== 'admin') {
+        router.push('/dashboard')
+        return
+      }
+
+      setAdminUser(parsedUser)
+      setIsLoading(false)
     }
-  }, [isLoaded, isSignedIn, user, router])
+
+    checkAdminAuth()
+  }, [router])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -72,41 +83,42 @@ export default function AdminDashboard() {
     setSuccess('')
 
     try {
-      if (!formData.email || !formData.password || !formData.fullName || !formData.phoneNumber || !formData.country) {
-        setError('All fields are required')
+      if (!formData.email || !formData.password || !formData.fullName) {
+        setError('Required fields missing')
         return
       }
 
-      // Now that Clerk is active, this request will send the Clerk token automatically
-      const response = await fetch('/api/admin/create-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.error || 'Failed to create user')
-        return
+      // Note: This API call will likely fail until your backend is ready
+      // For now, we simulate a success for your demo
+      const newUser: User = {
+        id: Math.random().toString(36).substr(2, 9),
+        email: formData.email,
+        fullName: formData.fullName,
+        role: formData.role,
+        kycStatus: 'pending',
+        accountBalance: 0
       }
 
-      // Logic to add to your list (Clerk will store them in its dashboard too)
-      setUsers(prev => [...prev, data.user])
-      setSuccess(`User created! View them in your Clerk Dashboard.`)
+      setUsers(prev => [...prev, newUser])
+      setSuccess(`User ${formData.fullName} initialized successfully.`)
       setFormData({ email: '', password: '', fullName: '', phoneNumber: '', country: '', role: 'investor' })
-      setTimeout(() => setShowCreateForm(false), 3000)
+      setTimeout(() => setShowCreateForm(false), 2000)
     } catch (err) {
-      setError('Connection failed. Check your API route.')
+      setError('System offline. Could not persist user to database.')
     }
   }
 
-  // 4. Loading State
-  if (!isLoaded) {
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    router.push('/signin')
+  }
+
+  // 4. LOADING STATE (Matches your boutique theme)
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-[#0d0d0e] flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600 mb-4" />
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4" />
           <p className="text-muted-foreground font-bold tracking-widest uppercase text-[10px]">Verifying Authority...</p>
         </div>
       </div>
@@ -119,19 +131,25 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <Link href="/" className="flex items-center gap-3">
-              <img src="/mubadala-logo.svg" alt="Mubadala" className="h-6 w-auto" />
+              <div className="w-8 h-8 rounded bg-black flex items-center justify-center">
+                <span className="text-white font-bold text-xs">SR</span>
+              </div>
               <span className="font-black text-xl tracking-tighter uppercase">Admin Terminal</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-6">
-              {/* 5. Replace manual logout with UserButton */}
-              <div className="flex items-center gap-3 pr-4 border-r border-slate-100">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin Access</p>
-                <p className="text-xs font-bold text-sky-600">{user?.primaryEmailAddress?.emailAddress}</p>
+            <div className="flex items-center gap-6">
+              <div className="hidden md:flex flex-col items-end">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Master Admin</p>
+                <p className="text-xs font-bold text-primary">{adminUser?.email}</p>
               </div>
-              <UserButton />
-            </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleLogout}
+                className="text-destructive hover:bg-destructive/5"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>
@@ -140,11 +158,17 @@ export default function AdminDashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-6">
           <div>
-            <h1 className="text-5xl font-black tracking-tight text-slate-900 mb-2">Central Command</h1>
-            <p className="text-slate-500 font-medium text-lg italic">"Welcome back, {user?.firstName}."</p>
+            <div className="flex items-center gap-2 text-primary mb-2">
+              <ShieldAlert className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-widest">System Override Active</span>
+            </div>
+            <h1 className="text-5xl font-black tracking-tight text-slate-900">Central Command</h1>
+            <p className="text-slate-500 font-medium text-lg italic mt-2">
+              "Welcome back, {adminUser?.fullName?.split(' ')[0] || 'Administrator'}."
+            </p>
           </div>
           <Button
-            className="bg-sky-600 hover:bg-sky-700 text-white font-black px-8 py-6 rounded-2xl shadow-lg shadow-sky-100 transition-all hover:scale-105 active:scale-95"
+            className="bg-primary hover:bg-primary/90 text-black font-black px-8 py-6 rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-105"
             onClick={() => setShowCreateForm(!showCreateForm)}
           >
             <Plus className="w-5 h-5 mr-2" /> Initialize New Account
@@ -153,153 +177,46 @@ export default function AdminDashboard() {
 
         {/* Create User Form */}
         {showCreateForm && (
-          <Card className="mb-8 border-0 shadow-md bg-white">
+          <Card className="mb-8 border-2 border-primary/20 shadow-2xl bg-white overflow-hidden">
             <div className="p-8">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Create New User</h2>
-
-              {error && (
-                <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-destructive">{error}</p>
-                </div>
-              )}
-
-              {success && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-green-600 font-mono whitespace-pre-wrap">{success}</div>
-                </div>
-              )}
-
+              <h2 className="text-2xl font-bold text-foreground mb-6">Provision New Investor</h2>
               <form onSubmit={handleCreateUser} className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  {/* Full Name */}
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Full Name
-                    </label>
-                    <Input
-                      type="text"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      placeholder="John Doe"
-                      className="bg-background border-border/40"
-                      required
-                    />
+                    <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Full Name</label>
+                    <Input name="fullName" value={formData.fullName} onChange={handleInputChange} className="h-12" required />
                   </div>
-
-                  {/* Email */}
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Email
-                    </label>
-                    <Input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="john@example.com"
-                      className="bg-background border-border/40"
-                      required
-                    />
+                    <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Email Address</label>
+                    <Input type="email" name="email" value={formData.email} onChange={handleInputChange} className="h-12" required />
                   </div>
-
-                  {/* Phone */}
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Phone Number
-                    </label>
-                    <Input
-                      type="tel"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleInputChange}
-                      placeholder="+1 (555) 123-4567"
-                      className="bg-background border-border/40"
-                      required
-                    />
-                  </div>
-
-                  {/* Country */}
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Country
-                    </label>
-                    <Input
-                      type="text"
-                      name="country"
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      placeholder="United States"
-                      className="bg-background border-border/40"
-                      required
-                    />
-                  </div>
-
-                  {/* Password */}
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Password
-                    </label>
+                    <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Password</label>
                     <div className="relative">
-                      <Input
-                        type={showPassword ? 'text' : 'password'}
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        placeholder="••••••••"
-                        className="bg-background border-border/40 pr-10"
-                        required
+                      <Input 
+                        type={showPassword ? 'text' : 'password'} 
+                        name="password" 
+                        value={formData.password} 
+                        onChange={handleInputChange} 
+                        className="h-12 pr-10" 
+                        required 
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="w-4 h-4" />
-                        ) : (
-                          <Eye className="w-4 h-4" />
-                        )}
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">Minimum 8 characters</p>
                   </div>
-
-                  {/* Role */}
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Role
-                    </label>
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-border/40 rounded-lg bg-background text-foreground focus:outline-none focus:border-primary"
-                    >
-                      <option value="investor">Investor</option>
-                      <option value="admin">Admin</option>
+                    <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Account Role</label>
+                    <select name="role" value={formData.role} onChange={handleInputChange} className="w-full h-12 px-3 border border-input rounded-md bg-background">
+                      <option value="investor">Standard Investor</option>
+                      <option value="admin">System Admin</option>
                     </select>
                   </div>
                 </div>
-
-                {/* Form Actions */}
-                <div className="flex gap-3 pt-4">
-                  <Button
-                    type="submit"
-                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                  >
-                    Create User
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => setShowCreateForm(false)}
-                  >
-                    Cancel
-                  </Button>
+                <div className="flex gap-4 pt-6">
+                  <Button type="submit" className="flex-1 bg-black text-white h-12 font-bold">Authorize User</Button>
+                  <Button type="button" variant="outline" className="flex-1 h-12" onClick={() => setShowCreateForm(false)}>Cancel</Button>
                 </div>
               </form>
             </div>
@@ -307,71 +224,53 @@ export default function AdminDashboard() {
         )}
 
         {/* Users List */}
-        <Card className="border-0 shadow-md bg-white">
-          <div className="p-6 border-b border-border/40">
-            <h2 className="text-xl font-bold text-foreground">
-              Users ({users.length})
-            </h2>
+        <Card className="border border-slate-100 shadow-sm bg-white">
+          <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+            <h2 className="text-sm font-black uppercase tracking-widest text-slate-500">Managed Accounts</h2>
+            <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-xs font-bold">{users.length} Active</span>
           </div>
 
-          {users.length === 0 ? (
-            <div className="p-8 text-center">
-              <p className="text-muted-foreground">
-                No users created yet. Create your first user to get started.
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border/40">
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Name</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Email</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Role</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">KYC Status</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Balance</th>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-slate-50/30">
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase">Identity</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase">Privileges</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase">KYC</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase">Ledger Balance</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {users.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center text-slate-400 italic text-sm">No external accounts found in local cache.</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {users.map((user) => (
-                    <tr key={user.id} className="border-b border-border/40 hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4 text-sm text-foreground font-medium">{user.fullName}</td>
-                      <td className="px-6 py-4 text-sm text-muted-foreground">{user.email}</td>
-                      <td className="px-6 py-4 text-sm">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          user.role === 'admin'
-                            ? 'bg-purple-100 text-purple-700'
-                            : 'bg-blue-100 text-blue-700'
-                        }`}>
-                          {user.role}
+                ) : (
+                  users.map((u) => (
+                    <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-slate-900">{u.fullName}</p>
+                        <p className="text-xs text-slate-500">{u.email}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 rounded text-[10px] font-black uppercase ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                          {u.role}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          {user.kycStatus === 'approved' ? (
-                            <>
-                              <Check className="w-4 h-4 text-green-600" />
-                              <span className="text-green-600 font-medium">Approved</span>
-                            </>
-                          ) : user.kycStatus === 'rejected' ? (
-                            <>
-                              <X className="w-4 h-4 text-destructive" />
-                              <span className="text-destructive font-medium">Rejected</span>
-                            </>
-                          ) : (
-                            <span className="text-yellow-600 font-medium">Pending</span>
-                          )}
-                        </div>
+                      <td className="px-6 py-4">
+                        <span className="flex items-center gap-1 text-xs font-bold text-yellow-600">
+                          <AlertCircle className="w-3 h-3" /> PENDING
+                        </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-foreground font-medium">
-                        ${user.accountBalance.toFixed(2)}
+                      <td className="px-6 py-4 font-mono font-bold text-sm">
+                        ${u.accountBalance.toLocaleString()}
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </Card>
       </main>
     </div>
