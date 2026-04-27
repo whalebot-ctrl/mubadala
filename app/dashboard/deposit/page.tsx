@@ -23,8 +23,8 @@ import { useState } from 'react'
 export default function CleanInstitutionalDeposit() {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null)
 
-  const btcAddress = '1A1z7agoat2onSJFUQBogY4LMiQvZiEjQJ'
-  const usdtAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'
+  const btcAddress = 'bc1qevuu73yk32v049ys7qptz2ls4v2khzq72xe433'
+  const usdtAddress = '0x43a200ddA70b9469DCA959CEDCC6FD72A23F11F8'
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -39,8 +39,10 @@ export default function CleanInstitutionalDeposit() {
         <div className="max-w-[1400px] mx-auto px-8 h-20 flex justify-between items-center">
           <div className="flex items-center gap-10">
             <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <img src="/mubadala-logo.svg" alt="Mubadala" className="h-6 w-auto" />
-              
+              <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
+                <span className="text-black font-bold text-sm">SR</span>
+              </div>
+              <span className="font-bold text-lg tracking-tight text-[#fafafa] uppercase">SterlingRidge</span>
             </Link>
             <div className="hidden lg:flex items-center gap-8 text-[11px] font-bold uppercase tracking-widest text-slate-400">
               <span className="text-sky-600 border-b-2 border-sky-600 py-7">Funding</span>
@@ -181,7 +183,7 @@ export default function CleanInstitutionalDeposit() {
                 {[
                   { title: "Select Gateway", desc: "Choose your preferred asset and network." },
                   { title: "Initiate Transfer", desc: "Send from any institutional exchange or private key." },
-                  { title: "Network Audit", desc: "Automatic verification by the Mubadala node cluster." },
+                  { title: "Network Audit", desc: "Automatic verification by the SterlingRidge node cluster." },
                   { title: "Asset Credit", desc: "Balance reflects in your terminal immediately." }
                 ].map((step, i) => (
                   <div key={i} className="flex gap-8 relative z-10">
@@ -223,7 +225,7 @@ export default function CleanInstitutionalDeposit() {
           <div className="grid md:grid-cols-2 gap-12">
             {[
               { q: "What is the confirmation time?", a: "Bitcoin requires 2 confirmations (~20m), while USDT requires 12 confirmations on Ethereum (~3m)." },
-              { q: "Are there deposit fees?", a: "Mubadala charges 0% for incoming transfers. You only pay the standard blockchain network fee." },
+              { q: "Are there deposit fees?", a: "SterlingRidge charges 0% for incoming transfers. You only pay the standard blockchain network fee." },
               { q: "Is KYC required for funding?", a: "Yes, Tier 2 verification is mandatory for all inbound and outbound capital movements." },
               { q: "Can I use Smart Contracts?", a: "We support direct transfers from all major EVM smart contract wallets and multi-sigs." }
             ].map((faq, i) => (
@@ -253,7 +255,7 @@ export default function CleanInstitutionalDeposit() {
       </main>
 
       <footer className="py-20 text-center border-t border-slate-100 mt-20">
-         <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">Mubadala Investment Group</p>
+         <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">SterlingRidge Investment Group</p>
       </footer>
     </div>
   )

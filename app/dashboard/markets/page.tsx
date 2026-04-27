@@ -129,7 +129,7 @@ export default function UltimateMarketsTerminal() {
         </div>
         <h2 className="text-white text-2xl font-black tracking-tighter mb-4 uppercase">Desktop Only Terminal</h2>
         <p className="text-slate-400 text-sm font-medium leading-relaxed max-w-[280px]">
-          The Mubadala Markets Terminal requires high-resolution displays for technical analysis and execution. 
+          The SterlingRidge Markets Terminal requires high-resolution displays for technical analysis and execution. 
           Please switch to an <span className="text-sky-400">iPad</span> or <span className="text-sky-400">Desktop</span>.
         </p>
         <div className="mt-10 flex gap-4">
@@ -153,8 +153,10 @@ export default function UltimateMarketsTerminal() {
           <div className="flex items-center gap-12">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <img src="/mubadala-logo.svg" alt="Mubadala" className="h-6 w-auto" />
-              
+              <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
+                <span className="text-black font-bold text-sm">SR</span>
+              </div>
+              <span className="font-bold text-lg tracking-tight text-[#fafafa] uppercase">SterlingRidge</span>
             </Link>
             </div>
             
@@ -290,7 +292,7 @@ export default function UltimateMarketsTerminal() {
                 </div>
               </Card>
               <Card className="bg-white border-none p-6 rounded-[24px] shadow-sm text-center">
-                 <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Mubadala API Uptime</h5>
+                 <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">SterlingRidge API Uptime</h5>
                  <p className="text-3xl font-black text-emerald-500">99.99%</p>
                  <span className="text-[10px] font-bold text-slate-400 uppercase">Institutional Grade Stable</span>
               </Card>

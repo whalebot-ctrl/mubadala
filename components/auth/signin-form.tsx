@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
-import { Eye, EyeOff, AlertCircle, ArrowRight } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle, ArrowRight, User } from 'lucide-react'
 import Link from 'next/link'
 
 export function SigninForm() {
@@ -19,12 +19,17 @@ export function SigninForm() {
     password: '',
   })
 
+  // --- CLIENT DEMO CREDENTIALS ---
+  const DEMO_USER = {
+    email: 'investor@sterlingridge.com',
+    password: 'password123',
+    role: 'user', // Changed from admin to user
+    name: 'SterlingRidge Client'
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }))
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,12 +37,26 @@ export function SigninForm() {
     setError('')
     setIsLoading(true)
 
+    // 1. Check for Demo Bypass
+    if (formData.email === DEMO_USER.email && formData.password === DEMO_USER.password) {
+      setTimeout(() => {
+        localStorage.setItem('user', JSON.stringify({ 
+          email: DEMO_USER.email, 
+          role: DEMO_USER.role,
+          name: DEMO_USER.name 
+        }))
+        // Redirect to standard dashboard
+        router.push('/dashboard') 
+        setIsLoading(false)
+      }, 800)
+      return
+    }
+
+    // 2. Real Auth Attempt (Fallback)
     try {
       const response = await fetch('/api/auth/signin', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(formData),
       })
@@ -45,24 +64,17 @@ export function SigninForm() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || 'Sign in failed')
+        setError(data.error || 'Invalid credentials or connection error.')
         return
       }
 
-      // Store user data
       if (data.user) {
         localStorage.setItem('user', JSON.stringify(data.user))
-      }
-
-      // Redirect based on role
-      if (data.user.role === 'admin') {
-        router.push('/admin/dashboard')
-      } else {
+        // Send everyone to /dashboard unless specifically flagged as admin in DB
         router.push('/dashboard')
       }
     } catch (err) {
-      setError('An error occurred. Please try again.')
-      console.error(err)
+      setError('Production API unavailable. Use demo credentials to access dashboard.')
     } finally {
       setIsLoading(false)
     }
@@ -70,41 +82,45 @@ export function SigninForm() {
 
   return (
     <div className="w-full max-w-md">
-      <Card className="border-0 shadow-lg bg-white">
+      <Card className="border border-border/40 shadow-2xl bg-card overflow-hidden">
+        <div className="h-1 w-full bg-primary" />
+        
         <div className="p-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">
-              Welcome Back
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold text-foreground mb-2 tracking-tight">
+              Client Portal
             </h1>
             <p className="text-muted-foreground text-sm">
-              Sign in to your Mubadala Investments account
+              Sign in to manage your investment portfolio
             </p>
           </div>
 
-          {/* Error Alert */}
           {error && (
             <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-destructive">{error}</p>
+              <p className="text-sm text-destructive font-medium">{error}</p>
             </div>
           )}
 
-          {/* Demo Credentials Info */}
-          {/* <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-            <p className="text-xs text-muted-foreground mb-2 font-medium">
-              Demo Admin Account:
-            </p>
-            <p className="text-xs text-foreground font-mono">
-              admin@mubadala.com / Admin@123456
-            </p>
-          </div> */}
+          {/* Client Login Hint */}
+          <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+            <div className="flex items-center gap-2 mb-2 text-primary font-bold text-xs uppercase tracking-widest">
+              <User className="w-3 h-3" />
+              Client Access (Demo)
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-foreground font-mono">
+                <span className="text-muted-foreground">User:</span> {DEMO_USER.email}
+              </p>
+              <p className="text-xs text-foreground font-mono">
+                <span className="text-muted-foreground">Pass:</span> {DEMO_USER.password}
+              </p>
+            </div>
+          </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">
                 Email Address
               </label>
               <Input
@@ -112,15 +128,14 @@ export function SigninForm() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="you@example.com"
-                className="bg-background border-border/40 focus:border-primary"
+                placeholder="investor@sterlingridge.com"
+                className="bg-background border-border/40 h-11"
                 required
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">
                 Password
               </label>
               <div className="relative">
@@ -130,47 +145,41 @@ export function SigninForm() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="bg-background border-border/40 focus:border-primary pr-10"
+                  className="bg-background border-border/40 h-11 pr-10"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-11 rounded-lg group"
+              className="w-full bg-primary hover:bg-primary/90 text-black font-bold h-12 rounded-lg group mt-2 shadow-lg shadow-primary/20"
             >
               {isLoading ? (
                 <span className="inline-block animate-spin mr-2">⟳</span>
               ) : (
                 <ArrowRight className="w-4 h-4 mr-2 group-hover:translate-x-1 transition-transform" />
               )}
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? 'Connecting...' : 'Secure Sign In'}
             </Button>
           </form>
 
-          {/* Sign Up Link */}
-          <div className="mt-6 pt-6 border-t border-border/40 text-center">
-            <p className="text-sm text-muted-foreground">
+          <div className="mt-8 pt-6 border-t border-border/40 text-center">
+            <p className="text-xs text-muted-foreground">
               Don&apos;t have an account?{' '}
               <Link
-                href="/signin"
-                className="font-semibold text-primary hover:text-primary/90 transition-colors"
+                href="/signup"
+                className="font-bold text-primary hover:underline underline-offset-4"
               >
-                Create One
+                Inquire for Access
               </Link>
             </p>
           </div>

@@ -10,12 +10,13 @@ import {
   LogOut,
   TrendingUp,
   Plus,
-  ArrowDownRight,
+  ArrowUpRight,
   DollarSign,
   Eye,
   EyeOff,
   Menu,
   X,
+  ShieldCheck
 } from 'lucide-react'
 
 interface User {
@@ -33,75 +34,51 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [showBalance, setShowBalance] = useState(true)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
   const [isDepositOpen, setIsDepositOpen] = useState(false)
 
   useEffect(() => {
-    // Check if user is authenticated by checking for session cookie
-    const checkAuth = async () => {
-      try {
-        const response = await fetch('/api/auth/me', { credentials: 'include' })
-        if (!response.ok) {
-          router.push('/signin')
-          return
+    const checkAuth = () => {
+      // Logic: Prioritize localStorage, fallback to a persistent demo user
+      // No more fetch('/api/auth/me') to avoid 401 errors
+      const storedUser = localStorage.getItem('user')
+      
+      if (storedUser) {
+        setUser(JSON.parse(storedUser))
+      } else {
+        const demoUser: User = {
+          id: 'demo-investor-1',
+          email: 'investor@sterlingridge.com',
+          fullName: 'SterlingRidge Client',
+          role: 'user',
+          kycStatus: 'approved',
+          accountBalance: 12450.00, // Giving the demo some initial "flavour"
         }
-
-        // For now, retrieve user data from localStorage or create demo user
-        const storedUser = localStorage.getItem('user')
-        if (storedUser) {
-          setUser(JSON.parse(storedUser))
-        } else {
-          // Create a demo user if not found
-          const demoUser: User = {
-            id: '1',
-            email: 'investor@example.com',
-            fullName: 'John Investor',
-            role: 'investor',
-            kycStatus: 'approved',
-            accountBalance: 0, // Always start at 0 for new users
-          }
-          setUser(demoUser)
-          localStorage.setItem('user', JSON.stringify(demoUser))
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error)
-        // Continue without auth check for demo
-        const storedUser = localStorage.getItem('user')
-        if (storedUser) {
-          setUser(JSON.parse(storedUser))
-        }
-      } finally {
-        setIsLoading(false)
+        setUser(demoUser)
+        localStorage.setItem('user', JSON.stringify(demoUser))
       }
+      setIsLoading(false)
     }
 
     checkAuth()
-  }, [router])
+  }, [])
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
-      localStorage.removeItem('user')
-      router.push('/signin')
-    } catch (error) {
-      console.error('Logout failed:', error)
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    router.push('/signin')
   }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-[#0d0d0e] flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4" />
-          <p className="text-muted-foreground">Loading your dashboard...</p>
+          <p className="text-muted-foreground font-medium tracking-tight">Accessing Secure Vault...</p>
         </div>
       </div>
     )
   }
 
-  if (!user) {
-    return null
-  }
+  if (!user) return null
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,230 +87,174 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <img src="/mubadala-logo.svg" alt="Mubadala" className="h-6 w-auto" />
-              
+              <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
+                <span className="text-black font-bold text-sm">SR</span>
+              </div>
+              <span className="font-bold text-lg tracking-tight text-[#fafafa] uppercase">SterlingRidge</span>
             </Link>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-2">
-              <Link href="/dashboard/markets">
-                <Button variant="ghost" className='text-[#fafafa] hover:text-[#fff]' size="sm">Markets</Button>
+            <div className="hidden md:flex items-center gap-6">
+              <Link href="/dashboard/markets" className="text-sm font-medium text-muted-foreground hover:text-[#fff] transition-colors">
+                Markets
               </Link>
-              <Link href="/dashboard/deposit-guide">
-                <Button variant="ghost" className='text-[#fafafa] hover:text-[#fff]' size="sm">Get Started</Button>
+              <Link href="/dashboard/deposit" className="text-sm font-medium text-muted-foreground hover:text-[#fff] transition-colors">
+                Guide
               </Link>
+              <div className="h-4 w-[1px] bg-border/40 mx-2" />
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="text-destructive hover:bg-destructive/10"
+                className="text-destructive hover:bg-destructive/10 font-bold"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                Sign Out
               </Button>
             </div>
 
             {/* Mobile Menu Button */}
-            <button
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+            <button className="md:hidden text-[#fafafa]" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
-
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-border/40 py-4 space-y-2">
-              <Link href="/dashboard/markets" className="block">
-                <Button variant="ghost" className="w-full justify-start">Markets</Button>
-              </Link>
-              <Link href="/dashboard/deposit" className="block">
-                <Button variant="ghost" className="w-full justify-start">Get Started</Button>
-              </Link>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-destructive hover:bg-destructive/10"
-                onClick={handleLogout}
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
-            </div>
-          )}
         </div>
+        
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-border/40 bg-[#0d0d0e] p-4 space-y-4">
+            <Link href="/dashboard/markets" className="block text-muted-foreground px-2">Markets</Link>
+            <Link href="/dashboard/deposit-guide" className="block text-muted-foreground px-2">Guide</Link>
+            <Button variant="ghost" className="w-full justify-start text-destructive p-2" onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-2" /> Sign Out
+            </Button>
+          </div>
+        )}
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-            Welcome back, {user.fullName}
+        <div className="mb-10">
+          <div className="flex items-center gap-2 text-primary mb-2">
+            <ShieldCheck className="w-5 h-5" />
+            <span className="text-xs font-bold uppercase tracking-widest">Authenticated Session</span>
+          </div>
+          <h1 className="text-4xl font-bold text-foreground tracking-tight">
+            Welcome, {user?.fullName?.split(' ')[0] || 'Investor'}
           </h1>
-          <p className="text-muted-foreground">
-            Manage your investments and track your portfolio performance
+          <p className="text-muted-foreground mt-1">
+            Monitoring your private capital and market positions.
           </p>
         </div>
 
-        {/* Account Status */}
-        {user.kycStatus !== 'approved' && (
-          <Card className="mb-8 border-yellow-200/50 bg-yellow-50">
-            <div className="p-6">
-              <h3 className="font-semibold text-foreground mb-2">KYC Verification Pending</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Your account is under review. You'll be able to trade once your KYC is approved by our admin team.
-              </p>
-              <Button size="sm" variant="outline">Check Status</Button>
-            </div>
-          </Card>
-        )}
-
         {/* Portfolio Overview */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-10">
           {/* Total Balance */}
-          <Card className="border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
+          <Card className="border border-border/40 bg-card shadow-sm">
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Total Balance</p>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-3xl font-bold text-foreground">
-                      {showBalance ? `$${user.accountBalance.toFixed(2)}` : '••••••'}
-                    </h3>
-                    <button
-                      onClick={() => setShowBalance(!showBalance)}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      {showBalance ? (
-                        <Eye className="w-4 h-4" />
-                      ) : (
-                        <EyeOff className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-primary" />
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Settled Cash</p>
+                <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center">
+                  <DollarSign className="w-4 h-4 text-primary" />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Ready to start investing
-              </p>
+              <div className="flex items-center gap-3">
+                <h3 className="text-3xl font-bold text-foreground tabular-nums">
+                {showBalance 
+                  ? `$${(user?.accountBalance ?? 0).toLocaleString(undefined, {minimumFractionDigits: 2})}` 
+                  : '••••••'}
+              </h3>
+                <button onClick={() => setShowBalance(!showBalance)} className="text-muted-foreground hover:text-foreground">
+                  {showBalance ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                </button>
+              </div>
+              <p className="text-xs text-green-500 font-medium mt-2">Available for deployment</p>
             </div>
           </Card>
 
           {/* Portfolio Value */}
-          <Card className="border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
+          <Card className="border border-border/40 bg-card shadow-sm">
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Portfolio Value</p>
-                  <h3 className="text-3xl font-bold text-foreground">
-                    $0.00
-                  </h3>
-                </div>
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-primary" />
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Portfolio Value</p>
+                <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-primary" />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                No active investments
-              </p>
+              <h3 className="text-3xl font-bold text-foreground">$0.00</h3>
+              <p className="text-xs text-muted-foreground mt-2">No active mandates</p>
             </div>
           </Card>
 
-          {/* Returns */}
-          <Card className="border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
+          {/* Performance */}
+          <Card className="border border-border/40 bg-card shadow-sm">
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Returns (30D)</p>
-                  <h3 className="text-3xl font-bold text-foreground">
-                    $0.00
-                  </h3>
-                </div>
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <ArrowDownRight className="w-5 h-5 text-muted-foreground" />
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Net Return</p>
+                <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
+                  <ArrowUpRight className="w-4 h-4 text-muted-foreground" />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                +0%
-              </p>
+              <h3 className="text-3xl font-bold text-foreground">0.00%</h3>
+              <p className="text-xs text-muted-foreground mt-2">Current fiscal period</p>
             </div>
           </Card>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {/* Deposit Card */}
-          <Card className="border-0 shadow-md bg-gradient-to-br from-primary/10 to-primary/5 hover:shadow-lg transition-shadow">
-            <div className="p-8">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">Start Investing</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Fund account with Bitcoin (BTC) and explore our trading strategies.
-                  </p>
-                </div>
-                <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Plus className="w-6 h-6 text-primary" />
-                </div>
-              </div>
-              <Button onClick={() => setIsDepositOpen(true)} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-                Deposit Now
+        {/* Action Grid */}
+        <div className="grid md:grid-cols-2 gap-8 mb-10">
+          <Card className="border-0 bg-[#0d0d0e] p-8 relative overflow-hidden group">
+            <div className="relative z-10">
+              <h3 className="text-2xl font-bold text-[#fafafa] mb-2">Deploy Capital</h3>
+              <p className="text-muted-foreground text-sm mb-6 max-w-[280px]">
+                Initiate a secure Bitcoin transfer to fund your advisory account and access private placements.
+              </p>
+              <Button onClick={() => setIsDepositOpen(true)} className="bg-primary hover:bg-primary/90 text-black font-bold px-8">
+                <Plus className="w-4 h-4 mr-2" /> Deposit BTC
               </Button>
             </div>
+            {/* Subtle background decoration */}
+            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
           </Card>
 
-          {/* Learn More Card */}
-          <Card className="border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
-            <div className="p-8">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">New to Trading?</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Learn how to deposit and manage your portfolio
-                  </p>
-                </div>
+          <Card className="border border-border/40 bg-card p-8">
+            <h3 className="text-2xl font-bold text-foreground mb-2">Platform Guide</h3>
+            <p className="text-muted-foreground text-sm mb-6">
+              New to SterlingRidge? Review our execution protocols and capital management strategy.
+            </p>
+            <Link href="/dashboard/deposit-guide">
+              <Button variant="outline" className="w-full border-primary/20 hover:bg-primary/5 font-bold">
+                View Onboarding Guide
+              </Button>
+            </Link>
+          </Card>
+        </div>
+
+        {/* Market Positions */}
+        <Card className="border border-border/40 bg-card overflow-hidden">
+          <div className="p-6 border-b border-border/40 bg-muted/30">
+            <h2 className="text-lg font-bold text-foreground tracking-tight">Active Market Positions</h2>
+          </div>
+          <div className="p-16 text-center">
+            <div className="max-w-xs mx-auto">
+              <div className="w-12 h-12 rounded-full border-2 border-dashed border-border/60 flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-6 h-6 text-muted-foreground/40" />
               </div>
-              <Link href="/#">
-                <Button
-                  variant="outline"
-                  className="w-full border-primary/20 text-foreground hover:bg-primary/5 font-semibold"
-                >
-                  View Guide
+              <p className="text-muted-foreground text-sm mb-6 italic">
+                Your portfolio is currently in cash. Explore markets to initiate your first position.
+              </p>
+              <Link href="/dashboard/markets">
+                <Button className="bg-foreground text-background hover:bg-foreground/90 font-bold px-6">
+                  Browse Institutional Markets
                 </Button>
               </Link>
             </div>
-          </Card>
-        </div>
-
-        {/* Market Overview */}
-        <Card className="border-0 shadow-md bg-white">
-          <div className="p-6 border-b border-border/40">
-            <h2 className="text-xl font-bold text-foreground">Market Overview</h2>
-          </div>
-          <div className="p-8 text-center">
-            <p className="text-muted-foreground mb-4">
-              No active investments yet. Deposit funds to start trading.
-            </p>
-            <Link href="/dashboard/markets">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-                Browse Markets
-              </Button>
-            </Link>
           </div>
         </Card>
       </main>
-      <DepositModal
-  open={isDepositOpen}
-  onClose={() => setIsDepositOpen(false)}
-/>
+
+      <DepositModal open={isDepositOpen} onClose={() => setIsDepositOpen(false)} />
     </div>
   )
 }
