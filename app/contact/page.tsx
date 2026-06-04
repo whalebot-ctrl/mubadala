@@ -70,7 +70,7 @@ export default function ContactPage() {
                 <Mail className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">Firm Inquiries</h3>
-              <p className="text-muted-foreground text-sm">advisory@sterlingridge.com</p>
+              <p className="text-muted-foreground text-sm">info@sterlingridge.com</p>
             </div>
           </Card>
 
@@ -80,7 +80,7 @@ export default function ContactPage() {
                 <Phone className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">New York Office</h3>
-              <p className="text-muted-foreground text-sm">+1 (212) 555-0198</p>
+              <p className="text-muted-foreground text-sm">+1 (970) 889-8843</p>
             </div>
           </Card>
 
@@ -153,7 +153,7 @@ export default function ContactPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="name@firm.com"
+                    placeholder="name@email.com"
                     required
                     className="bg-background border-border/40"
                   />
