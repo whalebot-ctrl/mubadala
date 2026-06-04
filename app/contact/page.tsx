@@ -70,7 +70,7 @@ export default function ContactPage() {
                 <Mail className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">Firm Inquiries</h3>
-              <p className="text-muted-foreground text-sm">info@sterlingridge.com</p>
+              <p className="text-muted-foreground text-sm">info@sterlinridge.com</p>
             </div>
           </Card>
 
