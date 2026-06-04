@@ -128,7 +128,7 @@ export function SigninForm() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="investor@sterlingridge.com"
+                placeholder="email"
                 className="bg-background border-border/40 h-11"
                 required
               />

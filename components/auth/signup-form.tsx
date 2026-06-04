@@ -144,7 +144,7 @@ export default function SignupForm() {
               <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Full Legal Name</label>
               <Input 
                 name="fullName" 
-                placeholder="John Doe"
+                placeholder="name"
                 value={formData.fullName}
                 onChange={handleChange} 
                 className="h-11 bg-slate-50/50 border-slate-100 focus:border-primary transition-all" 
@@ -158,7 +158,7 @@ export default function SignupForm() {
               <Input 
                 type="email" 
                 name="email" 
-                placeholder="investor@sterlingridge.com"
+                placeholder="email"
                 value={formData.email}
                 onChange={handleChange} 
                 className="h-11 bg-slate-50/50 border-slate-100 focus:border-primary transition-all" 
@@ -172,7 +172,7 @@ export default function SignupForm() {
                 <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Phone</label>
                 <Input 
                   name="phoneNumber" 
-                  placeholder="+1..."
+                  placeholder="number"
                   value={formData.phoneNumber}
                   onChange={handleChange} 
                   className="h-11 bg-slate-50/50 border-slate-100" 
