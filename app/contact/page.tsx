@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { ArrowLeft, Mail, Phone, MapPin, Send, Briefcase } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, MapPin, Send, Briefcase, User } from 'lucide-react'
 import { useState } from 'react'
 
 export default function ContactPage() {
@@ -62,8 +62,8 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {/* Contact Info Cards */}
+        {/* Three Column Cards Grid */}
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
           <Card className="border border-border/40 bg-card hover:border-primary/30 transition-all">
             <div className="p-8">
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
@@ -95,7 +95,39 @@ export default function ContactPage() {
           </Card>
         </div>
 
-        {/* Contact Form */}
+        {/* Meet Your Broker Section (Uncarded, standalone row) */}
+        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-12 mb-12 border-b border-border/40 px-4 md:px-0">
+          <div className="flex items-center gap-5">
+            {/* Image Placeholder Frame */}
+            <div className="w-20 h-20 rounded-full bg-muted border border-border/60 flex items-center justify-center overflow-hidden shrink-0 relative bg-gradient-to-b from-muted to-background">
+
+              <img src="/img.JPG" alt="" />
+            </div>
+            
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-primary uppercase tracking-widest block">
+                Assigned Broker
+              </span>
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">Benoit Hesnard</h2>
+              <p className="text-sm text-muted-foreground font-medium">Senior Managing Partner</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:items-end justify-center gap-1.5 pt-4 sm:pt-0 border-t sm:border-t-0 border-border/20">
+            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+              Contact Line
+            </span>
+            <a 
+              href="tel:+19708898843" 
+              className="inline-flex items-center gap-2 text-xl font-bold text-foreground hover:text-primary transition-colors tracking-tight"
+            >
+              <Phone className="w-5 h-5 text-primary shrink-0" />
+              +44 7847-190453
+            </a>
+          </div>
+        </div>
+
+        {/* Contact Form Container */}
         <div className="max-w-4xl mx-auto grid md:grid-cols-5 gap-0 rounded-2xl overflow-hidden border border-border/40 shadow-2xl">
           {/* Form Context Sidebar */}
           <div className="md:col-span-2 bg-[#080809] p-8 md:p-12 text-[#fafafa]">

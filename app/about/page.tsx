@@ -3,9 +3,63 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { ArrowLeft, Globe2, ShieldCheck, Zap, HeartHandshake, History, Target } from 'lucide-react'
+import { ArrowLeft, Globe2, ShieldCheck, Zap, HeartHandshake, History, Target, Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
+import { useState } from 'react'
 
 export default function AboutPage() {
+  const reviews = [
+    {
+      id: 1,
+      name: "Marcus Vance",
+      role: "Managing Director, Aegis Infrastructure Fund",
+      rating: 5,
+      text: "SterlingRidge brought institutional execution speed to our latest energy infrastructure capital raise. Their boutique attention to detail ensured that every structural term matched our fund’s strict parameters. A brilliant team.",
+      dealType: "Energy Capital Placement"
+    },
+    {
+      id: 2,
+      name: "Evelyn Sterling-Choi",
+      role: "Founder & CEO, NexaHealth Group",
+      rating: 5,
+      text: "Navigating our carve-out and subsequent strategic M&A advisory route was highly delicate. The partners at SterlingRidge handled the market positioning flawlessly, matching us with the right sovereign backing.",
+      dealType: "Healthcare M&A Advisory"
+    },
+    {
+      id: 3,
+      name: "Sir Alistair Thorne",
+      role: "Chief Investment Officer, Britannia Power PLC",
+      rating: 5,
+      text: "Their cross-border placement network between New York and London is formidable. We closed a challenging multi-tranche mandate three weeks ahead of schedule due to their round-the-clock determination.",
+      dealType: "Cross-Border Infrastructure"
+    },
+    {
+      id: 4,
+      name: "David Vance-Miller",
+      role: "General Partner, Summit Capital Advisors",
+      rating: 5,
+      text: "SterlingRidge operates with the unyielding integrity that is rarely found in the boutique market today. They focused entirely on our long-term economic value instead of rushing a quick deal wrap.",
+      dealType: "Strategic Venture Placement"
+    },
+    {
+      id: 5,
+      name: "Elena Rostova",
+      role: "Executive VP, Atlantic Renewables",
+      rating: 5,
+      text: "True grit in action. When macroeconomic fluctuations threatened our project financing deployment phase, the team stayed at the table, restructured the pricing configuration, and executed perfectly.",
+      dealType: "Renewable Power Mandate"
+    }
+  ]
+
+  const [currentReview, setCurrentReview] = useState(0)
+
+  const handleNextReview = () => {
+    setCurrentReview((prev) => (prev + 1) % reviews.length)
+  }
+
+  const handlePrevReview = () => {
+    setCurrentReview((prev) => (prev - 1 + reviews.length) % reviews.length)
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -66,7 +120,7 @@ export default function AboutPage() {
         </Card>
 
         {/* Core Values */}
-        <div className="mb-16">
+        <div className="mb-24">
           <h2 className="text-3xl font-bold text-foreground mb-10 text-center">The SterlingRidge Standard</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -106,6 +160,84 @@ export default function AboutPage() {
                 </Card>
               )
             })}
+          </div>
+        </div>
+
+        {/* Client Testimonials Slider Section */}
+        <div className="mb-24 border-t border-b border-border/30 py-16 bg-[#080809]/80 rounded-3xl px-4 md:px-12 relative overflow-hidden">
+          <div className="absolute right-6 top-6 opacity-5 pointer-events-none hidden md:block">
+            <Quote className="w-48 h-48 text-[#fafafa]" />
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-3 text-xs font-bold text-primary uppercase tracking-widest mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              Reviews Track Record
+            </div>
+
+            {/* Slider Content Frame */}
+            <div className="min-h-[220px] flex flex-col justify-between">
+              <div>
+                {/* Rating Stars Row */}
+                <div className="flex items-center gap-1 mb-6">
+                  {Array.from({ length: reviews[currentReview].rating }).map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                  ))}
+                </div>
+
+                {/* Review Text Body */}
+                <p className="text-xl md:text-2xl font-light text-[#fafafa] leading-relaxed mb-8 tracking-tight">
+                  &quot;{reviews[currentReview].text}&quot;
+                </p>
+              </div>
+
+              {/* Reviewer Meta Data Footer Line */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-6 border-t border-border/20">
+                <div>
+                  <h4 className="text-lg font-bold text-foreground leading-tight">{reviews[currentReview].name}</h4>
+                  <p className="text-sm text-muted-foreground mt-0.5">{reviews[currentReview].role}</p>
+                </div>
+                
+                <div className="flex items-center justify-between sm:justify-end gap-8">
+                  <div className="text-left sm:text-right">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Completed Asset Assignment</span>
+                    <span className="text-xs font-semibold text-primary">{reviews[currentReview].dealType}</span>
+                  </div>
+
+                  {/* Slider Manual Navigation Controls */}
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={handlePrevReview}
+                      className="p-2.5 rounded-full border border-border/60 text-muted-foreground hover:text-primary hover:border-primary/40 bg-background/50 transition-all active:scale-95"
+                      aria-label="Previous Review"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={handleNextReview}
+                      className="p-2.5 rounded-full border border-border/60 text-muted-foreground hover:text-primary hover:border-primary/40 bg-background/50 transition-all active:scale-95"
+                      aria-label="Next Review"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Pagination Navigation Dots indicator bar */}
+            <div className="flex items-center gap-2 mt-8">
+              {reviews.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentReview(index)}
+                  className={`h-1.5 transition-all rounded-full ${
+                    currentReview === index ? "w-6 bg-primary" : "w-1.5 bg-border/80"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
