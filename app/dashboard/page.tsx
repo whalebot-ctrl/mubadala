@@ -223,8 +223,8 @@ export default function DashboardPage() {
             <p className="text-muted-foreground text-sm mb-6">
               New to SterlingRidge? Review our execution protocols and capital management strategy.
             </p>
-            <Link href="/dashboard/deposit-guide">
-              <Button variant="outline" className="w-full border-primary/20 hover:bg-primary/5 font-bold">
+            <Link href="/dashboard/deposit">
+              <Button variant="outline" className="w-full border-primary/20 hover:shadow-lg font-bold">
                 View Onboarding Guide
               </Button>
             </Link>
