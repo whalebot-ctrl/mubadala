@@ -128,7 +128,7 @@ export default function SignupForm() {
               <span className="text-[10px] font-black uppercase tracking-[0.2em]">Private Placement</span>
             </div>
             <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Join SterlingRidge</h1>
-            <p className="text-muted-foreground text-sm">Initialize your secure investor profile to begin the verification process.</p>
+            <p className="text-muted-foreground text-sm">Register your secure investor profile to begin the verification process.</p>
           </div>
 
           {error && (
@@ -141,7 +141,7 @@ export default function SignupForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Full Legal Name */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Full Legal Name</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Full Name</label>
               <Input 
                 name="fullName" 
                 placeholder="name"
@@ -154,7 +154,7 @@ export default function SignupForm() {
 
             {/* Email */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Professional Email</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Email</label>
               <Input 
                 type="email" 
                 name="email" 
@@ -183,7 +183,7 @@ export default function SignupForm() {
                 <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Country</label>
                 <Input 
                   name="country" 
-                  placeholder="United States"
+                  placeholder="country"
                   value={formData.country}
                   onChange={handleChange} 
                   className="h-11 bg-slate-50/50 border-slate-100" 
@@ -194,7 +194,7 @@ export default function SignupForm() {
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Secure Password</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Password</label>
               <div className="relative">
                 <Input 
                   type={showPassword ? 'text' : 'password'} 
@@ -213,7 +213,7 @@ export default function SignupForm() {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Confirm Security Key</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Confirm Password</label>
               <div className="relative">
                 <Input 
                   type={showConfirmPassword ? 'text' : 'password'} 
@@ -240,7 +240,7 @@ export default function SignupForm() {
               ) : (
                 <div className="flex items-center">
                   <UserPlus className="w-4 h-4 mr-2" />
-                  Initialize Registration
+                  Register
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </div>
               )}
@@ -249,7 +249,7 @@ export default function SignupForm() {
 
           <div className="mt-8 pt-6 border-t border-slate-100 text-center">
             <p className="text-xs text-slate-500 font-medium">
-              Already have an established portal?{' '}
+              Already have an account?{' '}
               <Link href="/signin" className="text-primary font-bold hover:underline transition-all">
                 Sign In
               </Link>
