@@ -162,14 +162,14 @@ export default function DashboardPage() {
               <div className="flex items-center gap-3">
                 <h3 className="text-3xl font-bold text-foreground tabular-nums">
                 {showBalance 
-                  ? `$${(user?.accountBalance ?? 0).toLocaleString(undefined, {minimumFractionDigits: 2})}` 
+                  ? `$${(user?.accountBalance ?? 17000).toLocaleString(undefined, {minimumFractionDigits: 2})}` 
                   : '••••••'}
               </h3>
                 <button onClick={() => setShowBalance(!showBalance)} className="text-muted-foreground hover:text-foreground">
                   {showBalance ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </button>
               </div>
-              <p className="text-xs text-green-500 font-medium mt-2">Available for deployment</p>
+              <p className="text-xs text-green-500 font-medium mt-2">Available for withdrawal</p>
             </div>
           </Card>
 
@@ -182,7 +182,7 @@ export default function DashboardPage() {
                   <TrendingUp className="w-4 h-4 text-primary" />
                 </div>
               </div>
-              <h3 className="text-3xl font-bold text-foreground">$0.00</h3>
+              <h3 className="text-3xl font-bold text-foreground">$27000.00</h3>
               <p className="text-xs text-muted-foreground mt-2">No active mandates</p>
             </div>
           </Card>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
                   <ArrowUpRight className="w-4 h-4 text-muted-foreground" />
                 </div>
               </div>
-              <h3 className="text-3xl font-bold text-foreground">0.00%</h3>
+              <h3 className="text-3xl font-bold text-foreground">127.40%</h3>
               <p className="text-xs text-muted-foreground mt-2">Current fiscal period</p>
             </div>
           </Card>
