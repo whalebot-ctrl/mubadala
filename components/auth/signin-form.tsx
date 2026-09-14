@@ -22,8 +22,8 @@ export function SigninForm() {
   // --- CLIENT DEMO CREDENTIALS ---
   const DEMO_USER = {
     // email: 'sahowe716@gmail.com',
-    email: 'sommerwilliams90@gmail.com',
-    password: 'Ilovefaithful1$',
+    email: 'rochellehowe@gmail.com',
+    password: 'user2026$',
     role: 'user', // Changed from admin to user
     name: 'SterlingRidge Client'
   }
