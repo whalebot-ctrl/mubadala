@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ArrowLeft, CheckCircle, AlertCircle, FileText, Camera } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { BrandLogo } from '@/components/brand-logo'
 
 export default function KYCHelpPage() {
   return (
@@ -11,12 +12,7 @@ export default function KYCHelpPage() {
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-border/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <span className="text-primary font-bold">SR</span>
-              </div>
-              <span className="font-bold text-foreground">Sterling Ridge</span>
-            </Link>
+            <BrandLogo />
           </div>
         </div>
       </nav>

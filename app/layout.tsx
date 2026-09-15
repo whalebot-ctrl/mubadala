@@ -7,16 +7,13 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'SterlingRidge Investments & Company',
-  description: 'Investment advisory and capital placement firm specializing in energy and infrastructure.',
-  generator: 'v0.app',
+  title: {
+    default: 'Sterling Ridge — Digital Wealth',
+    template: '%s | Sterling Ridge',
+  },
+  description: 'Modern investing across crypto, global equities, and intelligently managed portfolios.',
   icons: {
-    icon: [
-      {
-        url: '/favicon.ico', // Ensure you have a favicon in /public or remove this
-        media: '(prefers-color-scheme: light)',
-      },
-    ],
+    icon: '/sterling-ridge-mark.svg',
   },
 }
 
@@ -24,7 +21,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#0d0d0e', // Updated to match SterlingRidge dark theme
+  themeColor: '#10251f',
 }
 
 export default function RootLayout({

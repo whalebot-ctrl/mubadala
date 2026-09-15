@@ -5,7 +5,10 @@ const isPublicRoute = createRouteMatcher([
   '/', 
   '/signin(.*)', 
   '/signup(.*)',
+  '/trade(.*)',
   '/api/auth(.*)', // <--- This allows the sign-in POST request to work
+  '/api/markets(.*)',
+  '/api/trade-data(.*)',
   '/api/public(.*)'
 ]);
 

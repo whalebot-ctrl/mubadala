@@ -165,5 +165,35 @@ export function initializeAdminUser() {
   }
 }
 
+const demoInvestors = [
+  { email: 'rochellehowe@gmail.com', fullName: 'Rochelle Howe', password: 'user2026$', accountBalance: 12450 },
+  { email: 'ava.morgan@gmail.com', fullName: 'Ava Morgan', password: 'Funds101$', accountBalance: 26400 },
+  { email: 'liam.carter@gmail.com', fullName: 'Liam Carter', password: 'Funds101$', accountBalance: 28750 },
+  { email: 'sophia.bennett@gmail.com', fullName: 'Sophia Bennett', password: 'Funds101$', accountBalance: 212300 },
+  { email: 'noah.williams@gmail.com', fullName: 'Noah Williams', password: 'Funds101$', accountBalance: 24950 },
+  { email: 'emma.thompson@gmail.com', fullName: 'Emma Thompson', password: 'Funds101$', accountBalance: 215600 },
+] as const;
+
+export function initializeDemoInvestors() {
+  for (const investor of demoInvestors) {
+    if (findUserByEmail(investor.email)) continue;
+
+    const user = createUser({
+      email: investor.email,
+      password: investor.password,
+      fullName: investor.fullName,
+      phoneNumber: '+1 555 010 0100',
+      country: 'United States',
+      role: 'investor',
+    });
+
+    updateUser(user.id, {
+      kycStatus: 'approved',
+      accountBalance: investor.accountBalance,
+    });
+  }
+}
+
 // Call on module load
 initializeAdminUser();
+initializeDemoInvestors();

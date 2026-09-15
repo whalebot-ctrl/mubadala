@@ -1,11 +1,11 @@
 'use client'
 
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { ArrowLeft, Mail, Phone, MapPin, Send, Briefcase, User } from 'lucide-react'
 import { useState } from 'react'
+import Link from 'next/link'
+import { ArrowRight, CheckCircle2, Mail, MapPin, Phone, Send } from 'lucide-react'
+import { BrandLogo } from '@/components/brand-logo'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -16,229 +16,198 @@ export default function ContactPage() {
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
     setIsSubmitted(true)
-    setTimeout(() => {
-      setIsSubmitted(false)
-      setFormData({ name: '', email: '', subject: '', message: '' })
-    }, 3000)
+    setFormData({ name: '', email: '', subject: '', message: '' })
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-[#0d0d0e]/95 backdrop-blur-sm border-b border-border/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded bg-primary flex items-center justify-center">
-                <span className="text-black font-bold text-xl">SR</span>
-              </div>
-              <span className="font-bold text-xl tracking-tight text-[#fafafa]">STERLINGRIDGE</span>
+    <div className="min-h-screen bg-[#F4F5EF] text-[#10251F]">
+      <header className="border-b border-[#10251F]/10">
+        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 lg:px-8">
+          <BrandLogo />
+          <nav className="hidden items-center gap-7 md:flex">
+            <Link href="/features" className="text-sm font-medium text-[#60736C] hover:text-[#10251F]">
+              Investments
             </Link>
-          </div>
+            <Link href="/about" className="text-sm font-medium text-[#60736C] hover:text-[#10251F]">
+              Our approach
+            </Link>
+          </nav>
+          <Button asChild className="rounded-full bg-[#10251F] px-5 text-white hover:bg-[#1B3B31]">
+            <Link href="/signup">Open an account <ArrowRight /></Link>
+          </Button>
         </div>
-      </nav>
+      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Header */}
-        <div className="mb-12">
-          <Link href="/" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-6 group">
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Firm Overview
-          </Link>
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 tracking-tight">
-            Connect with <span className="text-primary italic">Our Partners</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
-            Inquire about M&A advisory, capital placement, or strategic infrastructure partnerships.
-          </p>
-        </div>
-
-        {/* Three Column Cards Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          <Card className="border border-border/40 bg-card hover:border-primary/30 transition-all">
-            <div className="p-8">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
-                <Mail className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-bold text-foreground mb-2">Firm Inquiries</h3>
-              <p className="text-muted-foreground text-sm">info@sterlinridge.com</p>
+      <main>
+        <section className="border-b border-[#10251F]/10">
+          <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-[1fr_.7fr] lg:px-8 lg:py-28">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#71827C]">Contact us</p>
+              <h1 className="mt-6 max-w-3xl text-5xl font-medium leading-[.98] tracking-[-0.055em] sm:text-7xl">
+                Let&apos;s talk about
+                <span className="block font-serif italic text-[#527064]">your next move.</span>
+              </h1>
             </div>
-          </Card>
-
-          <Card className="border border-border/40 bg-card hover:border-primary/30 transition-all">
-            <div className="p-8">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
-                <Phone className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-bold text-foreground mb-2">New York Office</h3>
-              <p className="text-muted-foreground text-sm">+1 (970) 889-8843</p>
-            </div>
-          </Card>
-
-          <Card className="border border-border/40 bg-card hover:border-primary/30 transition-all">
-            <div className="p-8">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
-                <MapPin className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-bold text-foreground mb-2">Headquarters</h3>
-              <p className="text-muted-foreground text-sm">600 Fifth Ave, New York, NY 10020</p>
-            </div>
-          </Card>
-        </div>
-
-        {/* Meet Your Broker Section (Uncarded, standalone row) */}
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-12 mb-12 border-b border-border/40 px-4 md:px-0">
-          <div className="flex items-center gap-5">
-            {/* Image Placeholder Frame */}
-            <div className="w-20 h-20 rounded-full bg-muted border border-border/60 flex items-center justify-center overflow-hidden shrink-0 relative bg-gradient-to-b from-muted to-background">
-
-              <img src="/img.JPG" alt="" />
-            </div>
-            
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold text-primary uppercase tracking-widest block">
-                Assigned Broker
-              </span>
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">Benoit Hesnard</h2>
-              <p className="text-sm text-muted-foreground font-medium">Senior Managing Partner</p>
+            <div className="flex items-end">
+              <p className="max-w-md text-lg leading-8 text-[#60736C]">
+                Whether you have a portfolio question or need help getting started, our team is ready to help.
+              </p>
             </div>
           </div>
+        </section>
 
-          <div className="flex flex-col sm:items-end justify-center gap-1.5 pt-4 sm:pt-0 border-t sm:border-t-0 border-border/20">
-            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
-              Contact Line
-            </span>
-            <a 
-              href="tel:+19708898843" 
-              className="inline-flex items-center gap-2 text-xl font-bold text-foreground hover:text-primary transition-colors tracking-tight"
-            >
-              <Phone className="w-5 h-5 text-primary shrink-0" />
-              +44 7847-190453
-            </a>
+        <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-20">
+          <div className="grid gap-px overflow-hidden rounded-[28px] border border-[#10251F]/10 bg-[#10251F]/10 md:grid-cols-3">
+            {[
+              {
+                icon: Mail,
+                label: 'Email',
+                value: 'support@sterlingridge.com',
+                href: 'mailto:support@sterlingridge.com',
+              },
+              {
+                icon: Phone,
+                label: 'Client support',
+                value: '+1 (970) 889-8843',
+                href: 'tel:+19708898843',
+              },
+              {
+                icon: MapPin,
+                label: 'Office',
+                value: '600 Fifth Avenue, New York',
+              },
+            ].map(({ icon: Icon, label, value, href }) => {
+              const content = (
+                <>
+                  <Icon className="size-5 text-[#527064]" />
+                  <p className="mt-8 text-xs font-medium text-[#71827C]">{label}</p>
+                  <p className="mt-2 text-sm font-semibold">{value}</p>
+                </>
+              )
+
+              return href ? (
+                <a key={label} href={href} className="bg-[#F4F5EF] p-7 transition hover:bg-white">
+                  {content}
+                </a>
+              ) : (
+                <div key={label} className="bg-[#F4F5EF] p-7">
+                  {content}
+                </div>
+              )
+            })}
           </div>
-        </div>
+        </section>
 
-        {/* Contact Form Container */}
-        <div className="max-w-4xl mx-auto grid md:grid-cols-5 gap-0 rounded-2xl overflow-hidden border border-border/40 shadow-2xl">
-          {/* Form Context Sidebar */}
-          <div className="md:col-span-2 bg-[#080809] p-8 md:p-12 text-[#fafafa]">
-             <Briefcase className="w-10 h-10 text-primary mb-6" />
-             <h2 className="text-2xl font-bold mb-4">Strategic Mandates</h2>
-             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-               Please provide details regarding your inquiry. Our partners review all strategic proposals within 24–48 hours.
-             </p>
-             <div className="space-y-4">
-                <div className="flex items-center gap-3 text-xs text-primary/80 uppercase tracking-widest font-bold">
-                    <span className="w-1 h-1 rounded-full bg-primary" />
-                    M&A Advisory
-                </div>
-                <div className="flex items-center gap-3 text-xs text-primary/80 uppercase tracking-widest font-bold">
-                    <span className="w-1 h-1 rounded-full bg-primary" />
-                    Capital Placement
-                </div>
-                <div className="flex items-center gap-3 text-xs text-primary/80 uppercase tracking-widest font-bold">
-                    <span className="w-1 h-1 rounded-full bg-primary" />
-                    Infrastructure Projects
-                </div>
-             </div>
-          </div>
-
-          {/* Actual Form */}
-          <div className="md:col-span-3 bg-card p-8 md:p-12">
-            {isSubmitted && (
-              <div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-lg">
-                <p className="text-primary font-medium text-sm">Message received. An advisor will be in touch shortly.</p>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                    Name
-                  </label>
-                  <Input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Full Name"
-                    required
-                    className="bg-background border-border/40"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                    Email
-                  </label>
-                  <Input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="name@email.com"
-                    required
-                    className="bg-background border-border/40"
-                  />
-                </div>
-              </div>
-
+        <section className="mx-auto max-w-7xl px-5 pb-24 lg:px-8 lg:pb-32">
+          <div className="grid overflow-hidden rounded-[36px] border border-[#10251F]/10 bg-white/70 lg:grid-cols-[.72fr_1.28fr]">
+            <div className="flex flex-col justify-between bg-[#10251F] p-8 text-white sm:p-10">
               <div>
-                <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                  Subject of Inquiry
-                </label>
-                <Input
-                  type="text"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  placeholder="e.g. Energy Infrastructure Mandate"
-                  required
-                  className="bg-background border-border/40"
-                />
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D5F26A]">Send a message</p>
+                <h2 className="mt-5 text-4xl font-medium leading-tight tracking-[-0.04em]">
+                  Tell us how we can help.
+                </h2>
+                <p className="mt-5 max-w-sm text-sm leading-6 text-white/55">
+                  Share a little context and a member of our team will respond within one business day.
+                </p>
               </div>
-
-              <div>
-                <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                  Message
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Briefly describe your requirements..."
-                  required
-                  rows={4}
-                  className="w-full px-3 py-2 border border-border/40 rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm"
-                />
+              <div className="mt-14 space-y-3 text-sm text-white/65">
+                {['Crypto and funding support', 'Stocks and portfolio questions', 'Account and onboarding help'].map((item) => (
+                  <p key={item} className="flex items-center gap-3">
+                    <span className="size-1.5 rounded-full bg-[#D5F26A]" />
+                    {item}
+                  </p>
+                ))}
               </div>
+            </div>
 
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-black font-bold gap-2 py-6">
-                <Send className="w-4 h-4" />
-                Submit Inquiry
-              </Button>
-            </form>
+            <div className="p-6 sm:p-10">
+              {isSubmitted ? (
+                <div className="flex min-h-[460px] flex-col items-center justify-center text-center">
+                  <div className="flex size-14 items-center justify-center rounded-full bg-[#D5F26A]">
+                    <CheckCircle2 className="size-6" />
+                  </div>
+                  <h2 className="mt-6 text-2xl font-semibold">Message received</h2>
+                  <p className="mt-3 max-w-sm text-sm leading-6 text-[#60736C]">
+                    Thanks for getting in touch. A Sterling Ridge adviser will respond within one business day.
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsSubmitted(false)}
+                    className="mt-7 rounded-full border-[#10251F]/15 bg-transparent"
+                  >
+                    Send another message
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Field label="Full name">
+                      <Input
+                        required
+                        value={formData.name}
+                        onChange={(event) => setFormData({ ...formData, name: event.target.value })}
+                        placeholder="Your name"
+                        className="h-12 rounded-xl border-[#10251F]/10 bg-[#F9FAF6]"
+                      />
+                    </Field>
+                    <Field label="Email address">
+                      <Input
+                        required
+                        type="email"
+                        value={formData.email}
+                        onChange={(event) => setFormData({ ...formData, email: event.target.value })}
+                        placeholder="you@example.com"
+                        className="h-12 rounded-xl border-[#10251F]/10 bg-[#F9FAF6]"
+                      />
+                    </Field>
+                  </div>
+                  <Field label="What can we help with?">
+                    <Input
+                      required
+                      value={formData.subject}
+                      onChange={(event) => setFormData({ ...formData, subject: event.target.value })}
+                      placeholder="Portfolio, funding, account access…"
+                      className="h-12 rounded-xl border-[#10251F]/10 bg-[#F9FAF6]"
+                    />
+                  </Field>
+                  <Field label="Message">
+                    <textarea
+                      required
+                      rows={6}
+                      value={formData.message}
+                      onChange={(event) => setFormData({ ...formData, message: event.target.value })}
+                      placeholder="Tell us a little more"
+                      className="w-full resize-none rounded-xl border border-[#10251F]/10 bg-[#F9FAF6] px-4 py-3 text-sm outline-none transition placeholder:text-[#91A09A] focus:border-[#527064] focus:ring-2 focus:ring-[#527064]/15"
+                    />
+                  </Field>
+                  <Button type="submit" className="h-12 w-full rounded-full bg-[#10251F] text-white hover:bg-[#1B3B31]">
+                    Send message <Send className="size-4" />
+                  </Button>
+                </form>
+              )}
+            </div>
           </div>
-        </div>
+        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border/40 bg-muted/30 py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              &copy; 2026 SterlingRidge Investments & Company. Private and Confidential.
-            </p>
+      <footer className="border-t border-white/10 bg-[#0B1B16] text-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-10 sm:flex-row sm:items-end sm:justify-between lg:px-8">
+          <BrandLogo inverse />
+          <p className="text-xs text-white/40">© 2026 Sterling Ridge. All rights reserved.</p>
         </div>
       </footer>
     </div>
+  )
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-xs font-semibold text-[#60736C]">{label}</span>
+      {children}
+    </label>
   )
 }

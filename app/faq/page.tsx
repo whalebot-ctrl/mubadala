@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft, Plus, Minus } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { useState } from 'react'
+import { BrandLogo } from '@/components/brand-logo'
 
 interface FAQItem {
   id: string
@@ -79,7 +80,7 @@ export default function FAQPage() {
       id: '10',
       question: 'How do I contact support?',
       answer:
-        'Visit our Contact page or email support@mubadala-investments.com. Our support team typically responds within 2-4 hours during business hours.',
+        'Visit our Contact page or email support@sterlingridge.com. Our support team typically responds within 2-4 hours during business hours.',
     },
   ]
 
@@ -89,12 +90,7 @@ export default function FAQPage() {
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-border/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <span className="text-primary font-bold">M</span>
-              </div>
-              <span className="font-bold text-foreground">Mubadala</span>
-            </Link>
+            <BrandLogo />
           </div>
         </div>
       </nav>
@@ -111,7 +107,7 @@ export default function FAQPage() {
             Frequently Asked Questions
           </h1>
           <p className="text-xl text-muted-foreground">
-            Find answers to common questions about Mubadala Investments.
+            Find answers to common questions about Sterling Ridge.
           </p>
         </div>
 

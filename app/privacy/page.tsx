@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { BrandLogo } from '@/components/brand-logo'
 
 export default function PrivacyPage() {
   return (
@@ -11,12 +12,7 @@ export default function PrivacyPage() {
       <nav className="sticky top-0 z-50 bg-[#0d0d0e]/95 backdrop-blur-sm border-b border-b-border/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded bg-primary flex items-center justify-center">
-                <span className="text-black font-bold text-xl">SR</span>
-              </div>
-              <span className="font-bold text-xl tracking-tight text-[#fafafa]">STERLINGRIDGE</span>
-            </Link>
+            <BrandLogo inverse />
           </div>
         </div>
       </nav>

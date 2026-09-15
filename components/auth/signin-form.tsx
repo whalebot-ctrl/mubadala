@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
-import { Eye, EyeOff, AlertCircle, ArrowRight, User } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 export function SigninForm() {
@@ -19,15 +19,6 @@ export function SigninForm() {
     password: '',
   })
 
-  // --- CLIENT DEMO CREDENTIALS ---
-  const DEMO_USER = {
-    // email: 'sahowe716@gmail.com',
-    email: 'rochellehowe@gmail.com',
-    password: 'user2026$',
-    role: 'user', // Changed from admin to user
-    name: 'SterlingRidge Client'
-  }
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -38,22 +29,6 @@ export function SigninForm() {
     setError('')
     setIsLoading(true)
 
-    // 1. Check for Demo Bypass
-    if (formData.email === DEMO_USER.email && formData.password === DEMO_USER.password) {
-      setTimeout(() => {
-        localStorage.setItem('user', JSON.stringify({ 
-          email: DEMO_USER.email, 
-          role: DEMO_USER.role,
-          name: DEMO_USER.name 
-        }))
-        // Redirect to standard dashboard
-        router.push('/dashboard') 
-        setIsLoading(false)
-      }, 800)
-      return
-    }
-
-    // 2. Real Auth Attempt (Fallback)
     try {
       const response = await fetch('/api/auth/signin', {
         method: 'POST',
@@ -75,7 +50,7 @@ export function SigninForm() {
         router.push('/dashboard')
       }
     } catch (err) {
-      setError('Production API unavailable. Use demo credentials to access dashboard.')
+      setError('Unable to connect. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -83,18 +58,8 @@ export function SigninForm() {
 
   return (
     <div className="w-full max-w-md">
-      <Card className="border border-border/40 shadow-2xl bg-card overflow-hidden">
-        <div className="h-1 w-full bg-primary" />
-        
-        <div className="p-8">
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-foreground mb-2 tracking-tight">
-              Client Portal
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Sign in to manage your investment portfolio
-            </p>
-          </div>
+      <Card className="overflow-hidden rounded-3xl border border-[#10251F]/10 bg-white/75 shadow-none">
+        <div className="p-6 sm:p-8">
 
           {error && (
             <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-3">
@@ -103,25 +68,9 @@ export function SigninForm() {
             </div>
           )}
 
-          {/* Client Login Hint */}
-          {/* <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-            <div className="flex items-center gap-2 mb-2 text-primary font-bold text-xs uppercase tracking-widest">
-              <User className="w-3 h-3" />
-              Client Access (Demo)
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs text-foreground font-mono">
-                <span className="text-muted-foreground">User:</span> {DEMO_USER.email}
-              </p>
-              <p className="text-xs text-foreground font-mono">
-                <span className="text-muted-foreground">Pass:</span> {DEMO_USER.password}
-              </p>
-            </div>
-          </div> */}
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">
+              <label className="block text-xs font-semibold text-[#60736C] mb-2">
                 Email Address
               </label>
               <Input
@@ -130,13 +79,13 @@ export function SigninForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder=" "
-                className="bg-background border-border/40 h-11"
+                className="h-12 rounded-xl border-[#10251F]/10 bg-[#F9FAF6] px-4"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">
+              <label className="block text-xs font-semibold text-[#60736C] mb-2">
                 Password
               </label>
               <div className="relative">
@@ -146,7 +95,7 @@ export function SigninForm() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="bg-background border-border/40 h-11 pr-10"
+                  className="h-12 rounded-xl border-[#10251F]/10 bg-[#F9FAF6] px-4 pr-10"
                   required
                 />
                 <button
@@ -162,7 +111,7 @@ export function SigninForm() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90 text-black font-bold h-12 rounded-lg group mt-2 shadow-lg shadow-primary/20"
+              className="w-full bg-[#10251F] hover:bg-[#1B3B31] text-white font-semibold h-12 rounded-full group mt-2 shadow-none"
             >
               {isLoading ? (
                 <span className="inline-block animate-spin mr-2">⟳</span>
@@ -173,7 +122,7 @@ export function SigninForm() {
             </Button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-border/40 text-center">
+          <div className="mt-7 pt-6 border-t border-[#10251F]/10 text-center">
             <p className="text-xs text-muted-foreground">
               Don&apos;t have an account?{' '}
               <Link

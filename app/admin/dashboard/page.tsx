@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 // 1. REMOVED CLERK IMPORTS
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { BrandLogo } from '@/components/brand-logo'
 import {
   Plus,
   Check,
@@ -130,12 +130,10 @@ export default function AdminDashboard() {
       <nav className="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded bg-black flex items-center justify-center">
-                <span className="text-white font-bold text-xs">SR</span>
-              </div>
-              <span className="font-black text-xl tracking-tighter uppercase">Admin Terminal</span>
-            </Link>
+            <div className="flex items-center gap-3">
+              <BrandLogo compact />
+              <span className="text-sm font-semibold">Admin console</span>
+            </div>
 
             <div className="flex items-center gap-6">
               <div className="hidden md:flex flex-col items-end">

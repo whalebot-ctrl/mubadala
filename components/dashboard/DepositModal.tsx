@@ -29,11 +29,10 @@ export default function DepositModal({ open, onClose }: DepositModalProps) {
     const fetchRate = async () => {
       try {
         setIsFetchingRate(true)
-        const res = await fetch(
-          'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'
-        )
+        const res = await fetch('/api/markets', { cache: 'no-store' })
         const data = await res.json()
-        setBtcRate(data.bitcoin.usd)
+        const bitcoin = data.assets?.find((asset: { symbol: string }) => asset.symbol === 'BTC')
+        setBtcRate(bitcoin?.price || 0)
       } catch (err) {
         console.error(err)
       } finally {
@@ -58,6 +57,7 @@ export default function DepositModal({ open, onClose }: DepositModalProps) {
       setUsdAmount('')
       setBtcAmount(0)
       setCopied(false)
+      setHasSubmitted(false)
     }
   }, [open])
 
@@ -65,13 +65,13 @@ export default function DepositModal({ open, onClose }: DepositModalProps) {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-[#07130F]/70 backdrop-blur-sm flex items-center justify-center p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl"
+            className="bg-[#F9FAF6] text-[#10251F] w-full max-w-md rounded-[28px] p-6 shadow-2xl"
             initial={{ y: 40, opacity: 0, scale: 0.96 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 40, opacity: 0, scale: 0.96 }}
@@ -82,7 +82,7 @@ export default function DepositModal({ open, onClose }: DepositModalProps) {
               <h2 className="text-lg font-semibold">
                 {step === 1 ? 'Fund your account' : 'Send Bitcoin'}
               </h2>
-              <button onClick={onClose}>
+              <button onClick={onClose} className="text-[#71827C] hover:text-[#10251F]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -98,12 +98,12 @@ export default function DepositModal({ open, onClose }: DepositModalProps) {
                     type="number"
                     value={usdAmount}
                     onChange={(e) => setUsdAmount(e.target.value)}
-                    className="w-full mt-2 border rounded-xl px-4 py-3 text-lg"
+                    className="w-full mt-2 border border-[#10251F]/10 bg-white rounded-xl px-4 py-3 text-lg outline-none focus:border-[#527064]"
                     placeholder="100.00"
                   />
                 </div>
 
-                <div className="bg-gray-50 rounded-xl p-4 mb-5">
+                <div className="bg-[#EDF0E7] rounded-2xl p-4 mb-5">
                   <p className="text-xs text-muted-foreground">
                     You’ll send
                   </p>
@@ -119,7 +119,7 @@ export default function DepositModal({ open, onClose }: DepositModalProps) {
 
                 <Button
                   disabled={!usdAmount}
-                  className="w-full h-12"
+                  className="w-full h-12 rounded-full bg-[#10251F] text-white hover:bg-[#1B3B31]"
                   onClick={() => setStep(2)}
                 >
                   Continue
@@ -172,13 +172,13 @@ export default function DepositModal({ open, onClose }: DepositModalProps) {
         <div className="grid grid-cols-2 gap-2">
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full rounded-full"
             onClick={() => setStep(1)}
           >
             Back
           </Button>
           <Button
-            className="w-full"
+            className="w-full rounded-full bg-[#10251F] text-white hover:bg-[#1B3B31]"
             onClick={() => setHasSubmitted(true)}
           >
             I’ve Sent Payment
@@ -196,7 +196,7 @@ export default function DepositModal({ open, onClose }: DepositModalProps) {
           Your balance will be updated once the payment is received and confirmed on the blockchain.
         </p>
 
-        <Button className="w-full" onClick={onClose}>
+        <Button className="w-full rounded-full bg-[#10251F] text-white hover:bg-[#1B3B31]" onClick={onClose}>
           Done
         </Button>
       </div>

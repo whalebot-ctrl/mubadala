@@ -4,17 +4,18 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Clock, CheckCircle, AlertCircle, Link } from 'lucide-react'
+import { BrandLogo } from '@/components/brand-logo'
 
 export default function KYCVerificationPage() {
   const [kycStatus] = useState<'pending' | 'approved' | 'rejected'>('pending')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* <header className="border-b border-slate-700 bg-slate-800/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">Sterling Ridge</h1>
+      <header className="border-b border-white/10 bg-[#10251F]/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-[72px] max-w-6xl items-center px-5 lg:px-8">
+          <BrandLogo inverse />
         </div>
-      </header> */}
+      </header>
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">

@@ -63,15 +63,21 @@ export default function SignupForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
+      const data = await response.json()
 
       if (!response.ok) {
-        const data = await response.json()
         setError(data.error || 'Registration failed')
         setIsLoading(false)
         return
       }
 
-      // Success: Toggle the Broker message view
+      if (data.user) {
+        localStorage.setItem('user', JSON.stringify({
+          ...data.user,
+          fullName: formData.fullName.trim(),
+        }))
+      }
+
       setIsComplete(true)
       setIsLoading(false)
     } catch (err) {
@@ -83,26 +89,26 @@ export default function SignupForm() {
   // --- SUCCESS VIEW (Broker Contact Information) ---
   if (isComplete) {
     return (
-      <div className="w-full max-w-md">
-        <Card className="border-0 shadow-2xl bg-white overflow-hidden">
-          <div className="bg-[#0d0d0e] p-8 flex justify-center">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-              <CheckCircle className="w-10 h-10 text-primary" />
+      <div className="w-full max-w-xl">
+        <Card className="overflow-hidden rounded-3xl border border-[#10251F]/10 bg-white/75 shadow-none">
+          <div className="bg-[#10251F] p-8 flex justify-center">
+            <div className="w-16 h-16 rounded-full bg-[#D5F26A]/10 flex items-center justify-center border border-[#D5F26A]/20">
+              <CheckCircle className="w-8 h-8 text-[#D5F26A]" />
             </div>
           </div>
           <div className="p-8 text-center">
-            <h1 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight">Registration Initialized</h1>
-            <p className="text-slate-500 mb-8 leading-relaxed text-sm">
-              Your profile has been successfully created in our secure vault. To maintain our high-net-worth security standards, all new accounts require manual activation.
+            <h1 className="text-2xl font-semibold text-[#10251F] mb-4 tracking-tight">Account created</h1>
+            <p className="text-[#60736C] mb-8 leading-relaxed text-sm">
+              Your profile is ready. All new accounts are reviewed before investing is enabled.
             </p>
             
-            <div className="bg-slate-50 rounded-2xl p-6 mb-8 border border-slate-100 flex flex-col items-center gap-3">
+            <div className="bg-[#EEF1E8] rounded-2xl p-6 mb-8 border border-[#10251F]/5 flex flex-col items-center gap-3">
               <div className="p-3 bg-white rounded-full shadow-sm">
                 <Headset className="w-5 h-5 text-primary" />
               </div>
-              <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Next Step Required</h2>
-              <p className="text-slate-900 font-bold text-sm leading-tight">
-                Please contact your assigned broker to verify your identity and complete the onboarding process.
+              <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#71827C]">Next step</h2>
+              <p className="text-[#10251F] font-semibold text-sm leading-tight">
+                Contact your account adviser to verify your identity and complete onboarding.
               </p>
             </div>
 
@@ -120,15 +126,15 @@ export default function SignupForm() {
   // --- FORM VIEW ---
   return (
     <div className="w-full max-w-md">
-      <Card className="border-0 shadow-2xl bg-white">
+      <Card className="rounded-3xl border border-[#10251F]/10 bg-white/75 shadow-none">
         <div className="p-8">
           <div className="mb-8">
             <div className="flex items-center gap-2 text-primary mb-4">
               <ShieldCheck className="w-5 h-5" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Private Placement</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em]">Investor profile</span>
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Join SterlingRidge</h1>
-            <p className="text-muted-foreground text-sm">Register your secure investor profile to begin the verification process.</p>
+            <h2 className="text-3xl font-semibold text-[#10251F] tracking-tight mb-2">Create your account</h2>
+            <p className="text-[#60736C] text-sm">Enter your details to begin the secure verification process.</p>
           </div>
 
           {error && (
@@ -141,60 +147,60 @@ export default function SignupForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Full Legal Name */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Full Name</label>
+              <label className="block text-xs font-semibold text-[#60736C]">Full name</label>
               <Input 
                 name="fullName" 
                 placeholder="name"
                 value={formData.fullName}
                 onChange={handleChange} 
-                className="h-11 bg-slate-50/50 border-slate-100 focus:border-primary transition-all" 
-                required 
+                className="h-12 rounded-xl bg-[#F9FAF6] border-[#10251F]/10 focus:border-primary transition-all"
+                required
               />
             </div>
 
             {/* Email */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Email</label>
+              <label className="block text-xs font-semibold text-[#60736C]">Email address</label>
               <Input 
                 type="email" 
                 name="email" 
                 placeholder="email"
                 value={formData.email}
                 onChange={handleChange} 
-                className="h-11 bg-slate-50/50 border-slate-100 focus:border-primary transition-all" 
-                required 
+                className="h-12 rounded-xl bg-[#F9FAF6] border-[#10251F]/10 focus:border-primary transition-all"
+                required
               />
             </div>
 
             {/* Row: Phone and Country */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Phone</label>
+                <label className="block text-xs font-semibold text-[#60736C]">Phone</label>
                 <Input 
                   name="phoneNumber" 
                   placeholder="number"
                   value={formData.phoneNumber}
                   onChange={handleChange} 
-                  className="h-11 bg-slate-50/50 border-slate-100" 
-                  required 
+                  className="h-12 rounded-xl bg-[#F9FAF6] border-[#10251F]/10"
+                  required
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Country</label>
+                <label className="block text-xs font-semibold text-[#60736C]">Country</label>
                 <Input 
                   name="country" 
                   placeholder="country"
                   value={formData.country}
                   onChange={handleChange} 
-                  className="h-11 bg-slate-50/50 border-slate-100" 
-                  required 
+                  className="h-12 rounded-xl bg-[#F9FAF6] border-[#10251F]/10"
+                  required
                 />
               </div>
             </div>
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Password</label>
+              <label className="block text-xs font-semibold text-[#60736C]">Password</label>
               <div className="relative">
                 <Input 
                   type={showPassword ? 'text' : 'password'} 
@@ -202,8 +208,8 @@ export default function SignupForm() {
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange} 
-                  className="h-11 bg-slate-50/50 border-slate-100 pr-10" 
-                  required 
+                  className="h-12 rounded-xl bg-[#F9FAF6] border-[#10251F]/10 pr-10"
+                  required
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -213,7 +219,7 @@ export default function SignupForm() {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Confirm Password</label>
+              <label className="block text-xs font-semibold text-[#60736C]">Confirm password</label>
               <div className="relative">
                 <Input 
                   type={showConfirmPassword ? 'text' : 'password'} 
@@ -221,8 +227,8 @@ export default function SignupForm() {
                   placeholder="••••••••"
                   value={formData.confirmPassword}
                   onChange={handleChange} 
-                  className="h-11 bg-slate-50/50 border-slate-100 pr-10" 
-                  required 
+                  className="h-12 rounded-xl bg-[#F9FAF6] border-[#10251F]/10 pr-10"
+                  required
                 />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -233,7 +239,7 @@ export default function SignupForm() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#0d0d0e] hover:bg-black text-white font-bold h-12 rounded-xl group mt-6 shadow-xl shadow-slate-200 transition-all active:scale-95"
+              className="w-full bg-[#10251F] hover:bg-[#1B3B31] text-white font-semibold h-12 rounded-full group mt-6 shadow-none transition-all"
             >
               {isLoading ? (
                 <div className="h-5 w-5 border-2 border-white/20 border-t-white animate-spin rounded-full" />

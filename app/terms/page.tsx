@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { BrandLogo } from '@/components/brand-logo'
 
 export default function TermsPage() {
   return (
@@ -11,12 +12,7 @@ export default function TermsPage() {
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-border/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <span className="text-primary font-bold">M</span>
-              </div>
-              <span className="font-bold text-foreground">Mubadala</span>
-            </Link>
+            <BrandLogo />
           </div>
         </div>
       </nav>
@@ -44,7 +40,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">2. Use License</h2>
               <p className="text-muted-foreground leading-relaxed mb-3">
-                Permission is granted to temporarily download one copy of the materials (information or software) on Mubadala Investments&apos; website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
+                Permission is granted to access materials on Sterling Ridge&apos;s website for personal, non-commercial use only. This is the grant of a license, not a transfer of title, and under this license you may not:
               </p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>Modifying or copying the materials</li>

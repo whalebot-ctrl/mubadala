@@ -1,176 +1,136 @@
-'use client'
-
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { 
-  ArrowLeft, 
-  BarChart3, 
-  ShieldCheck, 
-  Zap, 
-  TrendingUp, 
-  Globe2, 
-  Layers,
-  ChevronRight,
-  Briefcase
+import {
+  ArrowRight,
+  Bitcoin,
+  ChartNoAxesCombined,
+  Check,
+  Layers3,
+  RefreshCcw,
+  ShieldCheck,
+  Sparkles,
 } from 'lucide-react'
+import { BrandLogo } from '@/components/brand-logo'
+import { Button } from '@/components/ui/button'
+
+const portfolios = [
+  {
+    number: '01',
+    icon: Bitcoin,
+    title: 'Digital assets',
+    description: 'Purposeful exposure to established crypto networks, sized around volatility and your risk profile.',
+    details: ['Bitcoin and Ethereum core', 'Risk-aware position sizing', 'Continuous allocation review'],
+  },
+  {
+    number: '02',
+    icon: ChartNoAxesCombined,
+    title: 'Global equities',
+    description: 'A diversified foundation of quality companies, market leaders, and low-cost index exposure.',
+    details: ['US and international stocks', 'Broad-market ETFs', 'Long-term quality focus'],
+  },
+  {
+    number: '03',
+    icon: Sparkles,
+    title: 'Smart strategies',
+    description: 'Managed allocations designed to respond to changing markets without chasing short-term noise.',
+    details: ['Rules-based rebalancing', 'Income opportunities', 'Goal-led allocation'],
+  },
+]
 
 export default function FeaturesPage() {
-  const features = [
-    {
-      icon: BarChart3,
-      title: 'Capital Markets Intelligence',
-      description: 'Access institutional-grade market analysis and data-driven insights tailored for complex investment structures.',
-    },
-    {
-      icon: ShieldCheck,
-      title: 'Boutique Risk Management',
-      description: 'Utilizing proprietary frameworks to mitigate risk across infrastructure and society-critical energy sectors.',
-    },
-    {
-      icon: TrendingUp,
-      title: 'Performance Analytics',
-      description: 'Sophisticated P&L tracking and performance attribution metrics for your diversified private and public portfolio.',
-    },
-    {
-      icon: Zap,
-      title: 'Relentless Execution',
-      description: 'Swift deployment of capital and strategic advisory, moving at the speed of global private equity markets.',
-    },
-    {
-      icon: Globe2,
-      title: 'Global Advisory Reach',
-      description: 'Strategic placement across London, New York, and Windsor, providing cross-border investment opportunities.',
-    },
-    {
-      icon: Layers,
-      title: 'Multi-Sector Exposure',
-      description: 'Seamlessly manage holdings across Energy, Healthcare, Real Assets, and Private Credit in one dashboard.',
-    },
-  ]
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-[#0d0d0e]/95 backdrop-blur-sm border-b border-border/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
-               <div className="w-8 h-8 rounded bg-primary flex items-center justify-center">
-                  <span className="text-black font-bold text-xl">SR</span>
-                </div>
-              <span className="font-bold text-xl tracking-tight text-[#fafafa]">STERLINGRIDGE</span>
-            </Link>
-          </div>
+    <div className="min-h-screen bg-[#F4F5EF] text-[#10251F]">
+      <header className="border-b border-[#10251F]/10">
+        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 lg:px-8">
+          <BrandLogo />
+          <nav className="hidden items-center gap-7 md:flex">
+            <Link href="/trade" className="text-sm font-medium text-[#60736C] hover:text-[#10251F]">Trade</Link>
+            <Link href="/about" className="text-sm font-medium text-[#60736C] hover:text-[#10251F]">Our approach</Link>
+          </nav>
+          <Button asChild className="rounded-full bg-[#10251F] px-5 text-white hover:bg-[#1B3B31]">
+            <Link href="/signup">Start investing <ArrowRight /></Link>
+          </Button>
         </div>
-      </nav>
+      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Header */}
-        <div className="mb-12">
-          <Link href="/" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-6 group">
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Firm Overview
-          </Link>
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 tracking-tight">
-            Our <span className="text-primary italic">Capabilities</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
-            SterlingRidge provides the grit and expertise required to navigate today’s complex capital markets.
-          </p>
-        </div>
-
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {features.map((feature) => {
-            const Icon = feature.icon
-            return (
-              <Card key={feature.title} className="border border-border/40 bg-card hover:border-primary/30 transition-all duration-300">
-                <div className="p-8">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">{feature.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-                </div>
-              </Card>
-            )
-          })}
-        </div>
-
-        {/* Advanced Capabilities Section */}
-        <Card className="border border-border/40 bg-[#080809] overflow-hidden">
-          <div className="p-8 md:p-12">
-            <div className="flex items-center gap-3 mb-8">
-                <Briefcase className="w-6 h-6 text-primary" />
-                <h2 className="text-3xl font-bold text-[#fafafa]">Institutional Advisory</h2>
+      <main>
+        <section className="border-b border-[#10251F]/10">
+          <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-[1fr_.72fr] lg:px-8 lg:py-28">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#71827C]">Investment options</p>
+              <h1 className="mt-6 max-w-4xl text-5xl font-medium leading-[.98] tracking-[-0.055em] sm:text-7xl">
+                A portfolio for the
+                <span className="block font-serif italic text-[#527064]">world as it is now.</span>
+              </h1>
             </div>
-            
-            <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
-              {[
-                {
-                  label: "Strategic M&A Support",
-                  text: "End-to-end advisory for mergers, acquisitions, and divestitures within infrastructure."
-                },
-                {
-                  label: "Capital Raising & Structuring",
-                  text: "Bespoke debt and equity solutions for founders and society-critical enterprises."
-                },
-                {
-                  label: "Private Equity Placement",
-                  text: "Facilitating high-conviction capital flow into promising global sectors."
-                },
-                {
-                  label: "Restructuring Advisory",
-                  text: "Expertise in navigating complex financial transitions with grit and determination."
-                }
-              ].map((item) => (
-                <div key={item.label} className="flex gap-4">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-primary font-bold text-xs">✓</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-[#fafafa] mb-1">{item.label}</h4>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{item.text}</p>
-                  </div>
-                </div>
-              ))}
+            <div className="flex items-end">
+              <p className="max-w-lg text-lg leading-8 text-[#60736C]">
+                Crypto potential, equity resilience, and intelligent management—brought together in one measured strategy.
+              </p>
             </div>
           </div>
-        </Card>
+        </section>
 
-        {/* CTA */}
-        <div className="text-center py-24">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-            Ready to Execute?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Join the founders and institutions partnering with SterlingRidge to build the future of infrastructure.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/signup">
-                <Button className="bg-primary hover:bg-primary/90 text-black font-bold px-10 py-6 text-lg rounded-lg">
-                Partner With Us
-                </Button>
-            </Link>
-            <Link href="/contact">
-                <Button variant="outline" className="px-10 py-6 text-lg rounded-lg border-primary/20">
-                Speak to an Advisor
-                </Button>
-            </Link>
+        <section className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
+          <div className="space-y-4">
+            {portfolios.map(({ number, icon: Icon, title, description, details }) => (
+              <article key={title} className="grid gap-8 rounded-[30px] border border-[#10251F]/10 bg-white/65 p-7 lg:grid-cols-[80px_1fr_1fr] lg:p-10">
+                <span className="font-mono text-xs text-[#82918C]">{number}</span>
+                <div>
+                  <div className="flex size-12 items-center justify-center rounded-2xl bg-[#10251F] text-[#D5F26A]">
+                    <Icon className="size-5" />
+                  </div>
+                  <h2 className="mt-8 text-3xl font-medium tracking-[-0.035em]">{title}</h2>
+                  <p className="mt-4 max-w-md text-sm leading-6 text-[#60736C]">{description}</p>
+                </div>
+                <div className="flex flex-col justify-end rounded-2xl bg-[#EDF0E7] p-6">
+                  {details.map((detail) => (
+                    <div key={detail} className="flex items-center gap-3 border-b border-[#10251F]/10 py-3 last:border-0">
+                      <Check className="size-4 text-[#64820F]" />
+                      <span className="text-sm font-medium">{detail}</span>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
           </div>
-        </div>
+        </section>
+
+        <section className="bg-[#10251F] text-white">
+          <div className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-24">
+            <div className="grid gap-12 lg:grid-cols-2">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D5F26A]">How we manage</p>
+                <h2 className="mt-5 max-w-xl text-4xl font-medium tracking-[-0.04em] sm:text-5xl">
+                  Discipline does more work than prediction.
+                </h2>
+              </div>
+              <div className="grid gap-px overflow-hidden rounded-3xl bg-white/10 sm:grid-cols-3">
+                {[
+                  { icon: Layers3, title: 'Diversify', text: 'Spread risk across distinct return drivers.' },
+                  { icon: RefreshCcw, title: 'Rebalance', text: 'Keep your allocation aligned over time.' },
+                  { icon: ShieldCheck, title: 'Protect', text: 'Apply clear controls to every decision.' },
+                ].map(({ icon: Icon, title, text }) => (
+                  <div key={title} className="bg-[#163129] p-6">
+                    <Icon className="size-5 text-[#D5F26A]" />
+                    <h3 className="mt-10 font-semibold">{title}</h3>
+                    <p className="mt-2 text-xs leading-5 text-white/50">{text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-5 py-24 text-center lg:px-8">
+          <h2 className="text-4xl font-medium tracking-[-0.04em]">Put your money to work with purpose.</h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#60736C]">
+            Build a modern portfolio that is understandable, diversified, and designed around you.
+          </p>
+          <Button asChild className="mt-8 h-12 rounded-full bg-[#10251F] px-7 text-white hover:bg-[#1B3B31]">
+            <Link href="/signup">Create your account <ArrowRight /></Link>
+          </Button>
+        </section>
       </main>
-
-      {/* Re-using simple footer style */}
-      <footer className="border-t border-border/40 bg-muted/30 py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              &copy; 2026 SterlingRidge Investments & Company. Private and Confidential.
-            </p>
-        </div>
-      </footer>
     </div>
   )
 }
