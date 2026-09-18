@@ -50,22 +50,12 @@ type Position = {
   color: string
 }
 
-const defaultPositions: Position[] = [
-  { id: '1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 6200, unrealizedReturnPct: 16.13, currentValueUSD: 7200, color: '#D5F26A' },
-  { id: '2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 5000, unrealizedReturnPct: 8, currentValueUSD: 5400, color: '#8FAE9F' },
-  { id: '3', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 4600, unrealizedReturnPct: 10.87, currentValueUSD: 5100, color: '#527064' },
-  { id: '4', asset: 'Vanguard S&P 500 ETF', ticker: 'VOO', category: 'Index fund', allocatedUSD: 4550, unrealizedReturnPct: 5.49, currentValueUSD: 4800, color: '#B9C8C1' },
-  { id: '5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 4400, unrealizedReturnPct: 2.27, currentValueUSD: 4500, color: '#E3E8D6' },
-]
+const defaultPositions: Position[] = []
 
 const portfolioByEmail: Record<string, Position[]> = {
-  'rochellehowe@gmail.com': [
-    { id: 'rochelle-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 8500, unrealizedReturnPct: 18.4, currentValueUSD: 10064, color: '#D5F26A' },
-    { id: 'rochelle-2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 6200, unrealizedReturnPct: 12.2, currentValueUSD: 6956, color: '#8FAE9F' },
-    { id: 'rochelle-3', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 5400, unrealizedReturnPct: 10.87, currentValueUSD: 5987, color: '#527064' },
-    { id: 'rochelle-4', asset: 'Vanguard S&P 500 ETF', ticker: 'VOO', category: 'Index fund', allocatedUSD: 4300, unrealizedReturnPct: 5.49, currentValueUSD: 4536, color: '#B9C8C1' },
-    { id: 'rochelle-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 3800, unrealizedReturnPct: 2.27, currentValueUSD: 3886, color: '#E3E8D6' },
-  ],
+  // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
+  'sahowe716@gmail.com': [],
+  'rochellehowe@gmail.com': [],
   'ava.morgan@gmail.com': [
     { id: 'ava-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 10500, unrealizedReturnPct: 20, currentValueUSD: 12600, color: '#D5F26A' },
     { id: 'ava-2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 7000, unrealizedReturnPct: 11.43, currentValueUSD: 7800, color: '#8FAE9F' },
@@ -127,7 +117,7 @@ export default function ProfessionalDashboard() {
   const invested = useMemo(() => positions.reduce((sum, item) => sum + item.currentValueUSD, 0), [positions])
   const principal = useMemo(() => positions.reduce((sum, item) => sum + item.allocatedUSD, 0), [positions])
   const gain = invested - principal
-  const returnPercent = (gain / principal) * 100
+  const returnPercent = principal > 0 ? (gain / principal) * 100 : 0
   const performance = useMemo(
     () => ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'].map((month, index) => ({
       month,
@@ -136,6 +126,7 @@ export default function ProfessionalDashboard() {
     [invested],
   )
   const allocationGradient = useMemo(() => {
+    if (!invested || !positions.length) return 'conic-gradient(#E3E8D6 0 100%)'
     let start = 0
     const stops = positions.map((position) => {
       const end = start + (position.currentValueUSD / invested) * 100
@@ -148,17 +139,19 @@ export default function ProfessionalDashboard() {
 
   useEffect(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem('user') || '{}')
-      const profile: User = {
-        id: stored.id || 'demo-investor-1',
-        email: stored.email || 'rochellehowe@gmail.com',
-        fullName: stored.fullName || stored.name || 'Rochelle Howe',
-        role: stored.role || 'user',
-        kycStatus: stored.kycStatus || 'approved',
-        accountBalance: typeof stored.accountBalance === 'number' ? stored.accountBalance : 3250,
+      const stored = JSON.parse(localStorage.getItem('user') || 'null')
+      if (!stored?.email || !stored?.fullName) {
+        router.replace('/signin')
+        return
       }
-      setUser(profile)
-      localStorage.setItem('user', JSON.stringify(profile))
+      setUser({
+        id: stored.id,
+        email: stored.email,
+        fullName: stored.fullName,
+        role: stored.role || 'investor',
+        kycStatus: stored.kycStatus || 'approved',
+        accountBalance: typeof stored.accountBalance === 'number' ? stored.accountBalance : 0,
+      })
     } catch {
       localStorage.removeItem('user')
       router.replace('/signin')
@@ -260,7 +253,7 @@ export default function ProfessionalDashboard() {
                   {showBalance ? usd.format(invested + user.accountBalance) : '••••••••'}
                 </p>
                 <p className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-[#D5F26A]">
-                  <ArrowUpRight className="size-4" /> +{returnPercent.toFixed(2)}% all time
+                  <ArrowUpRight className="size-4" /> {returnPercent >= 0 ? '+' : ''}{returnPercent.toFixed(2)}% all time
                 </p>
               </div>
               <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5 text-[11px] text-white/55">
@@ -299,23 +292,27 @@ export default function ProfessionalDashboard() {
               </div>
             </div>
             <div className="mt-7 space-y-3">
-              {positions.slice(0, 4).map((position) => (
-                <div key={position.id} className="flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-2 text-[#60736C]">
-                    <span className="size-2 rounded-full" style={{ backgroundColor: position.color }} />
-                    {position.ticker}
-                  </span>
-                  <span className="font-semibold">{((position.currentValueUSD / invested) * 100).toFixed(1)}%</span>
-                </div>
-              ))}
+              {positions.length === 0 ? (
+                <p className="text-xs text-[#71827C]">No allocations yet.</p>
+              ) : (
+                positions.slice(0, 4).map((position) => (
+                  <div key={position.id} className="flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-2 text-[#60736C]">
+                      <span className="size-2 rounded-full" style={{ backgroundColor: position.color }} />
+                      {position.ticker}
+                    </span>
+                    <span className="font-semibold">{invested ? ((position.currentValueUSD / invested) * 100).toFixed(1) : '0.0'}%</span>
+                  </div>
+                ))
+              )}
             </div>
           </Card>
         </section>
 
         <section className="mt-5 grid gap-4 sm:grid-cols-3">
-          <Metric label="Invested assets" value={usd.format(invested)} note={`${positions.length} holdings`} />
+          <Metric label="Invested assets" value={usd.format(invested)} note={positions.length ? `${positions.length} holdings` : 'No holdings yet'} />
           <Metric label="Available cash" value={showBalance ? usd.format(user.accountBalance) : '••••••'} note="Ready to withdraw" />
-          <Metric label="Total gain" value={`+${usd.format(gain)}`} note={`+${returnPercent.toFixed(2)}% since investing`} positive />
+          <Metric label="Total gain" value={`${gain >= 0 ? '+' : ''}${usd.format(gain)}`} note={`${returnPercent >= 0 ? '+' : ''}${returnPercent.toFixed(2)}% since investing`} positive={gain >= 0} />
         </section>
 
         <section className="mt-10 grid gap-5 lg:grid-cols-[1fr_300px]">
@@ -329,6 +326,12 @@ export default function ProfessionalDashboard() {
                 Open Trade <ChevronRight className="size-3.5" />
               </Link>
             </div>
+            {positions.length === 0 ? (
+              <div className="px-6 py-16 text-center">
+                <p className="font-semibold">No investments yet</p>
+                <p className="mt-2 text-sm text-[#71827C]">Add funds to start building your portfolio.</p>
+              </div>
+            ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[640px] text-left">
                 <thead>
@@ -363,6 +366,7 @@ export default function ProfessionalDashboard() {
                 </tbody>
               </table>
             </div>
+            )}
           </Card>
 
           <Card className="rounded-[28px] border border-[#10251F]/10 bg-[#E9ECD9] p-6 shadow-none">
