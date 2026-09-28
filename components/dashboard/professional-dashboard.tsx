@@ -63,6 +63,13 @@ const portfolioByEmail: Record<string, Position[]> = {
     { id: 'ava-4', asset: 'Vanguard S&P 500 ETF', ticker: 'VOO', category: 'Index fund', allocatedUSD: 7000, unrealizedReturnPct: 8.57, currentValueUSD: 7600, color: '#B9C8C1' },
     { id: 'ava-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 6200, unrealizedReturnPct: 4.52, currentValueUSD: 6480, color: '#E3E8D6' },
   ],
+  'squadbeta130@gmail.com': [
+    { id: 'squadbeta130-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 10500, unrealizedReturnPct: 20, currentValueUSD: 12600, color: '#D5F26A' },
+    { id: 'squadbeta130-2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 7000, unrealizedReturnPct: 11.43, currentValueUSD: 7800, color: '#8FAE9F' },
+    { id: 'squadbeta130-3', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 7200, unrealizedReturnPct: 13.89, currentValueUSD: 8200, color: '#527064' },
+    { id: 'squadbeta130-4', asset: 'Vanguard S&P 500 ETF', ticker: 'VOO', category: 'Index fund', allocatedUSD: 7000, unrealizedReturnPct: 8.57, currentValueUSD: 7600, color: '#B9C8C1' },
+    { id: 'squadbeta130-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 6200, unrealizedReturnPct: 4.52, currentValueUSD: 6480, color: '#E3E8D6' },
+  ],
   'liam.carter@gmail.com': [
     { id: 'liam-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 15600, unrealizedReturnPct: 15.38, currentValueUSD: 18000, color: '#D5F26A' },
     { id: 'liam-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 7500, unrealizedReturnPct: 13.33, currentValueUSD: 8500, color: '#8FAE9F' },
