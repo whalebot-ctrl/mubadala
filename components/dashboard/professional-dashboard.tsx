@@ -54,7 +54,13 @@ const defaultPositions: Position[] = []
 
 const portfolioByEmail: Record<string, Position[]> = {
   // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
-  'sahowe716@gmail.com': [],
+  'sahowe716@gmail.com': [
+    { id: 'sahowe716-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#D5F26A' },
+    { id: 'sahowe716-2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#8FAE9F' },
+    { id: 'sahowe716-3', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#527064' },
+    { id: 'sahowe716-4', asset: 'Vanguard S&P 500 ETF', ticker: 'VOO', category: 'Index fund', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#B9C8C1' },
+    { id: 'sahowe716-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#E3E8D6' },
+  ],
   'rochellehowe@gmail.com': [],
   'ava.morgan@gmail.com': [
     { id: 'ava-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 10500, unrealizedReturnPct: 20, currentValueUSD: 12600, color: '#D5F26A' },
@@ -77,12 +83,12 @@ const portfolioByEmail: Record<string, Position[]> = {
     { id: 'liam-4', asset: 'Invesco Nasdaq 100 ETF', ticker: 'QQQ', category: 'Index fund', allocatedUSD: 11300, unrealizedReturnPct: 9.73, currentValueUSD: 12400, color: '#B9C8C1' },
     { id: 'liam-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 8500, unrealizedReturnPct: 3.76, currentValueUSD: 8820, color: '#E3E8D6' },
   ],
-  'sophia.bennett@gmail.com': [
-    { id: 'sophia-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 18100, unrealizedReturnPct: 16.02, currentValueUSD: 21000, color: '#D5F26A' },
-    { id: 'sophia-2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 12800, unrealizedReturnPct: 13.28, currentValueUSD: 14500, color: '#8FAE9F' },
-    { id: 'sophia-3', asset: 'Apple', ticker: 'AAPL', category: 'US equity', allocatedUSD: 11500, unrealizedReturnPct: 8.7, currentValueUSD: 12500, color: '#527064' },
-    { id: 'sophia-4', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 12500, unrealizedReturnPct: 13.6, currentValueUSD: 14200, color: '#B9C8C1' },
-    { id: 'sophia-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 13700, unrealizedReturnPct: 4.01, currentValueUSD: 14250, color: '#E3E8D6' },
+  'sommerwilliams90@gmail.com': [
+    { id: 'sommerwilliams90-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 18100, unrealizedReturnPct: 16.02, currentValueUSD: 21000, color: '#D5F26A' },
+    { id: 'sommerwilliams90-2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 12800, unrealizedReturnPct: 13.28, currentValueUSD: 14500, color: '#8FAE9F' },
+    { id: 'sommerwilliams90-3', asset: 'Apple', ticker: 'AAPL', category: 'US equity', allocatedUSD: 11500, unrealizedReturnPct: 8.7, currentValueUSD: 12500, color: '#527064' },
+    { id: 'sommerwilliams90-4', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 12500, unrealizedReturnPct: 13.6, currentValueUSD: 14200, color: '#B9C8C1' },
+    { id: 'sommerwilliams90-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 13700, unrealizedReturnPct: 4.01, currentValueUSD: 14250, color: '#E3E8D6' },
   ],
   'noah.williams@gmail.com': [
     { id: 'noah-1', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 7600, unrealizedReturnPct: 11.84, currentValueUSD: 8500, color: '#D5F26A' },
