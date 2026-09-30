@@ -55,7 +55,7 @@ const defaultPositions: Position[] = []
 const portfolioByEmail: Record<string, Position[]> = {
   // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
   'sahowe716@gmail.com': [
-    { id: 'sahowe716-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 650, unrealizedReturnPct: 0, currentValueUSD: 650, color: '#D5F26A' },
+    { id: 'sahowe716-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#D5F26A' },
     { id: 'sahowe716-2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#8FAE9F' },
     { id: 'sahowe716-3', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#527064' },
     { id: 'sahowe716-4', asset: 'Vanguard S&P 500 ETF', ticker: 'VOO', category: 'Index fund', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#B9C8C1' },
