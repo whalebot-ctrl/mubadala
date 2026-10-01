@@ -59,7 +59,7 @@ const portfolioByEmail: Record<string, Position[]> = {
     { id: 'sahowe716-2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#8FAE9F' },
     { id: 'sahowe716-3', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#527064' },
     { id: 'sahowe716-4', asset: 'Vanguard S&P 500 ETF', ticker: 'VOO', category: 'Index fund', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#B9C8C1' },
-    { id: 'sahowe716-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#E3E8D6' },
+    { id: 'sahowe716-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#E3E886' },
   ],
   'rochellehowe@gmail.com': [],
   'ava.morgan@gmail.com': [
