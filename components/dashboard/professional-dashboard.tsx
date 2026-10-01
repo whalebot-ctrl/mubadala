@@ -21,9 +21,11 @@ import {
 import {
   Area,
   AreaChart,
+  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from 'recharts'
 import { BrandLogo } from '@/components/brand-logo'
 import DepositModal from '@/components/dashboard/DepositModal'
@@ -106,13 +108,62 @@ const portfolioByEmail: Record<string, Position[]> = {
   ],
 }
 
-const performanceFactors = [0.9185, 0.9304, 0.9237, 0.9659, 0.9904, 1]
+const CHART_POINTS = 7
+
+type MarketQuote = {
+  symbol: string
+  price: number
+  percentChange: number
+  chartData: { time: number; price: number }[]
+}
 
 const usd = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
   minimumFractionDigits: 2,
 })
+
+function sampleSparkline(chartData: { time: number; price: number }[], count: number) {
+  if (!chartData.length) return []
+  if (chartData.length <= count) return chartData
+  const sampled: { time: number; price: number }[] = []
+  const step = (chartData.length - 1) / (count - 1)
+  for (let i = 0; i < count; i += 1) {
+    sampled.push(chartData[Math.round(i * step)])
+  }
+  return sampled
+}
+
+function recentDayLabels() {
+  return Array.from({ length: CHART_POINTS }, (_, index) => {
+    const date = new Date()
+    date.setDate(date.getDate() - (CHART_POINTS - 1 - index))
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  })
+}
+
+function holdingValueAtIndex(position: Position, quote: MarketQuote | undefined, index: number) {
+  const spark = quote?.chartData
+  if (spark?.length && position.currentValueUSD > 0) {
+    const sampled = sampleSparkline(spark, CHART_POINTS)
+    const lastPrice = sampled[sampled.length - 1]?.price || quote?.price || 0
+    if (lastPrice > 0 && sampled[index]) {
+      return (position.currentValueUSD / lastPrice) * sampled[index].price
+    }
+  }
+
+  const start = position.allocatedUSD
+  const end = position.currentValueUSD
+  const progress = CHART_POINTS <= 1 ? 1 : index / (CHART_POINTS - 1)
+  return start + (end - start) * progress
+}
+
+function liveHoldingValue(position: Position, quote: MarketQuote | undefined) {
+  if (!quote?.price || position.currentValueUSD <= 0) return position.currentValueUSD
+  const sparkLast = quote.chartData[quote.chartData.length - 1]?.price
+  const reference = sparkLast && sparkLast > 0 ? sparkLast : quote.price
+  return position.currentValueUSD * (quote.price / reference)
+}
 
 export default function ProfessionalDashboard() {
   const router = useRouter()
@@ -122,33 +173,98 @@ export default function ProfessionalDashboard() {
   const [mobileMenu, setMobileMenu] = useState(false)
   const [depositOpen, setDepositOpen] = useState(false)
   const [withdrawOpen, setWithdrawOpen] = useState(false)
+  const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({})
 
   const positions = useMemo(
-    () => portfolioByEmail[user?.email.toLowerCase() || ''] || defaultPositions,
+    () =>
+      (portfolioByEmail[user?.email.toLowerCase() || ''] || defaultPositions).filter(
+        (position) => position.allocatedUSD > 0 || position.currentValueUSD > 0,
+      ),
     [user?.email],
   )
-  const invested = useMemo(() => positions.reduce((sum, item) => sum + item.currentValueUSD, 0), [positions])
+  const livePositions = useMemo(
+    () =>
+      positions.map((position) => {
+        const liveValue = liveHoldingValue(position, quotes[position.ticker])
+        const returnPct = position.allocatedUSD > 0
+          ? ((liveValue - position.allocatedUSD) / position.allocatedUSD) * 100
+          : 0
+        return { ...position, currentValueUSD: liveValue, unrealizedReturnPct: returnPct }
+      }),
+    [positions, quotes],
+  )
+  const invested = useMemo(
+    () => livePositions.reduce((sum, item) => sum + item.currentValueUSD, 0),
+    [livePositions],
+  )
   const principal = useMemo(() => positions.reduce((sum, item) => sum + item.allocatedUSD, 0), [positions])
+  const cash = user?.accountBalance || 0
+  const portfolioTotal = invested + cash
   const gain = invested - principal
   const returnPercent = principal > 0 ? (gain / principal) * 100 : 0
-  const performance = useMemo(
-    () => ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'].map((month, index) => ({
-      month,
-      value: Math.round(invested * performanceFactors[index]),
-    })),
-    [invested],
-  )
+  const performance = useMemo(() => {
+    const fallbackLabels = recentDayLabels()
+    const sparkTemplate = livePositions
+      .map((position) => quotes[position.ticker]?.chartData || [])
+      .sort((left, right) => right.length - left.length)[0]
+    const sampledTimes = sparkTemplate?.length ? sampleSparkline(sparkTemplate, CHART_POINTS) : []
+
+    return fallbackLabels.map((label, index) => {
+      const holdingsValue = positions.reduce(
+        (sum, position) => sum + holdingValueAtIndex(position, quotes[position.ticker], index),
+        0,
+      )
+      return {
+        label: sampledTimes[index]?.time
+          ? new Date(sampledTimes[index].time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          : label,
+        portfolio: holdingsValue + cash,
+        invested: principal,
+      }
+    })
+  }, [cash, livePositions, positions, principal, quotes])
   const allocationGradient = useMemo(() => {
-    if (!invested || !positions.length) return 'conic-gradient(#E3E8D6 0 100%)'
+    if (!invested || !livePositions.length) return 'conic-gradient(#E3E8D6 0 100%)'
     let start = 0
-    const stops = positions.map((position) => {
+    const stops = livePositions.map((position) => {
       const end = start + (position.currentValueUSD / invested) * 100
       const stop = `${position.color} ${start.toFixed(2)}% ${end.toFixed(2)}%`
       start = end
       return stop
     })
     return `conic-gradient(${stops.join(', ')})`
-  }, [invested, positions])
+  }, [invested, livePositions])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadQuotes = async () => {
+      try {
+        const response = await fetch('/api/markets', { cache: 'no-store' })
+        const data = await response.json()
+        const next: Record<string, MarketQuote> = {}
+        for (const asset of data.assets || []) {
+          if (!asset?.symbol) continue
+          next[asset.symbol] = {
+            symbol: asset.symbol,
+            price: Number(asset.price) || 0,
+            percentChange: Number(asset.percentChange) || 0,
+            chartData: Array.isArray(asset.chartData) ? asset.chartData : [],
+          }
+        }
+        if (!cancelled) setQuotes(next)
+      } catch {
+        // Keep the last successful quotes so the chart still scales to portfolio amounts.
+      }
+    }
+
+    loadQuotes()
+    const timer = window.setInterval(loadQuotes, 45_000)
+    return () => {
+      cancelled = true
+      window.clearInterval(timer)
+    }
+  }, [])
 
   useEffect(() => {
     try {
@@ -263,33 +379,46 @@ export default function ProfessionalDashboard() {
                   </button>
                 </div>
                 <p className="mt-3 text-4xl font-medium tracking-[-0.04em] sm:text-5xl">
-                  {showBalance ? usd.format(invested + user.accountBalance) : '••••••••'}
+                  {showBalance ? usd.format(portfolioTotal) : '••••••••'}
                 </p>
-                <p className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-[#D5F26A]">
-                  <ArrowUpRight className="size-4" /> {returnPercent >= 0 ? '+' : ''}{returnPercent.toFixed(2)}% all time
+                <p className={`mt-3 flex items-center gap-1.5 text-sm font-semibold ${gain >= 0 ? 'text-[#D5F26A]' : 'text-[#F3B4A8]'}`}>
+                  {gain >= 0 ? <ArrowUpRight className="size-4" /> : <ArrowDownToLine className="size-4" />} {returnPercent >= 0 ? '+' : ''}{returnPercent.toFixed(2)}% all time
                 </p>
               </div>
               <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5 text-[11px] text-white/55">
-                USD
+                Live · USD
               </span>
             </div>
             <div className="mt-7 h-52 sm:h-60">
+              {portfolioTotal <= 0 && principal <= 0 ? (
+                <div className="flex h-full items-center justify-center text-sm text-white/45">
+                  Portfolio activity will appear here once funds are added.
+                </div>
+              ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={performance}>
+                <AreaChart data={performance} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="portfolioArea" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#D5F26A" stopOpacity=".3" />
                       <stop offset="100%" stopColor="#D5F26A" stopOpacity="0" />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,.35)', fontSize: 10 }} />
+                  <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,.35)', fontSize: 10 }} />
+                  <YAxis hide domain={[0, (dataMax: number) => Math.max(dataMax * 1.08, 1)]} />
                   <Tooltip
-                    formatter={(value) => [usd.format(Number(value)), 'Portfolio']}
+                    formatter={(value, name) => [
+                      usd.format(Number(value)),
+                      name === 'invested' ? 'Amount invested' : 'Portfolio',
+                    ]}
                     contentStyle={{ border: 0, borderRadius: 12, background: '#F4F5EF', color: '#10251F' }}
                   />
-                  <Area type="monotone" dataKey="value" stroke="#D5F26A" strokeWidth={2.5} fill="url(#portfolioArea)" />
+                  <Area type="monotone" dataKey="portfolio" stroke="#D5F26A" strokeWidth={2.5} fill="url(#portfolioArea)" isAnimationActive={false} />
+                  {principal > 0 && (
+                    <Line type="monotone" dataKey="invested" stroke="rgba(255,255,255,.45)" strokeWidth={1.5} strokeDasharray="5 5" dot={false} isAnimationActive={false} />
+                  )}
                 </AreaChart>
               </ResponsiveContainer>
+              )}
             </div>
           </Card>
 
@@ -305,10 +434,10 @@ export default function ProfessionalDashboard() {
               </div>
             </div>
             <div className="mt-7 space-y-3">
-              {positions.length === 0 ? (
+              {livePositions.length === 0 ? (
                 <p className="text-xs text-[#71827C]">No allocations yet.</p>
               ) : (
-                positions.slice(0, 4).map((position) => (
+                livePositions.slice(0, 4).map((position) => (
                   <div key={position.id} className="flex items-center justify-between text-xs">
                     <span className="flex items-center gap-2 text-[#60736C]">
                       <span className="size-2 rounded-full" style={{ backgroundColor: position.color }} />
@@ -323,7 +452,7 @@ export default function ProfessionalDashboard() {
         </section>
 
         <section className="mt-5 grid gap-4 sm:grid-cols-3">
-          <Metric label="Invested assets" value={usd.format(invested)} note={positions.length ? `${positions.length} holdings` : 'No holdings yet'} />
+          <Metric label="Invested assets" value={usd.format(invested)} note={livePositions.length ? `${livePositions.length} holdings · live` : 'No holdings yet'} />
           <Metric label="Available cash" value={showBalance ? usd.format(user.accountBalance) : '••••••'} note="Ready to withdraw" />
           <Metric label="Total gain" value={`${gain >= 0 ? '+' : ''}${usd.format(gain)}`} note={`${returnPercent >= 0 ? '+' : ''}${returnPercent.toFixed(2)}% since investing`} positive={gain >= 0} />
         </section>
@@ -339,7 +468,7 @@ export default function ProfessionalDashboard() {
                 Open Trade <ChevronRight className="size-3.5" />
               </Link>
             </div>
-            {positions.length === 0 ? (
+            {livePositions.length === 0 ? (
               <div className="px-6 py-16 text-center">
                 <p className="font-semibold">No investments yet</p>
                 <p className="mt-2 text-sm text-[#71827C]">Add funds to start building your portfolio.</p>
@@ -357,7 +486,7 @@ export default function ProfessionalDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {positions.map((position) => (
+                  {livePositions.map((position) => (
                     <tr key={position.id} className="border-b border-[#10251F]/5 last:border-0 hover:bg-[#F4F5EF]/70">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -372,7 +501,9 @@ export default function ProfessionalDashboard() {
                       </td>
                       <td className="px-4 py-4 text-xs text-[#60736C]">{position.category}</td>
                       <td className="px-4 py-4 text-sm font-medium tabular-nums">{usd.format(position.allocatedUSD)}</td>
-                      <td className="px-4 py-4 text-xs font-semibold text-[#64820F]">+{position.unrealizedReturnPct}%</td>
+                      <td className={`px-4 py-4 text-xs font-semibold ${position.unrealizedReturnPct >= 0 ? 'text-[#64820F]' : 'text-[#B4533A]'}`}>
+                        {position.unrealizedReturnPct >= 0 ? '+' : ''}{position.unrealizedReturnPct.toFixed(2)}%
+                      </td>
                       <td className="px-6 py-4 text-right text-sm font-semibold tabular-nums">{usd.format(position.currentValueUSD)}</td>
                     </tr>
                   ))}
