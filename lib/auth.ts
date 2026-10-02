@@ -168,7 +168,7 @@ export function initializeAdminUser() {
 const demoInvestors = [
   // Real investor account — edit accountBalance here to change available cash.
   { email: 'squadbeta130@gmail.com', fullName: 'Jordan  Belfort', password: 'Ilovefaithful1$', accountBalance: 25000 },
-  { email: 'sahowe716@gmail.com', fullName: 'Rochelle Howe', password: 'user2026$', accountBalance: 5000 }, 
+  { email: 'sahowe716@gmail.com', fullName: 'Rochelle Howe', password: 'user2026$', accountBalance: 0 }, 
 
   { email: 'rochellehowe@gmail.com', fullName: 'Rochelle Howe', password: 'user2026$', accountBalance: 0 },
   { email: 'ava.morgan@gmail.com', fullName: 'Ava Morgan', password: 'Funds101$', accountBalance: 26400 },
@@ -180,7 +180,14 @@ const demoInvestors = [
 
 export function initializeDemoInvestors() {
   for (const investor of demoInvestors) {
-    if (findUserByEmail(investor.email)) continue;
+    const existing = findUserByEmail(investor.email)
+    if (existing) {
+      updateUser(existing.id, {
+        kycStatus: 'approved',
+        accountBalance: investor.accountBalance,
+      })
+      continue
+    }
 
     const user = createUser({
       email: investor.email,

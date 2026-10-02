@@ -57,11 +57,10 @@ const defaultPositions: Position[] = []
 const portfolioByEmail: Record<string, Position[]> = {
   // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
   'sahowe716@gmail.com': [
-    { id: 'sahowe716-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#D5F26A' },
-    { id: 'sahowe716-2', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#8FAE9F' },
-    { id: 'sahowe716-3', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#527064' },
-    { id: 'sahowe716-4', asset: 'Vanguard S&P 500 ETF', ticker: 'VOO', category: 'Index fund', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#B9C8C1' },
-    { id: 'sahowe716-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 0, unrealizedReturnPct: 0, currentValueUSD: 0, color: '#E3E886' },
+    { id: 'sahowe716-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 2650, unrealizedReturnPct: 0, currentValueUSD: 2650, color: '#D5F26A' },
+    { id: 'sahowe716-2', asset: 'XRP', ticker: 'XRP', category: 'Digital asset', allocatedUSD: 450, unrealizedReturnPct: 0, currentValueUSD: 450, color: '#8FAE9F' },
+    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 750, unrealizedReturnPct: 0, currentValueUSD: 750, color: '#E3E8D6' },
+    { id: 'sahowe716-4', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 1150, unrealizedReturnPct: 0, currentValueUSD: 1150, color: '#527064' },
   ],
   'rochellehowe@gmail.com': [],
   'ava.morgan@gmail.com': [
@@ -106,6 +105,18 @@ const portfolioByEmail: Record<string, Position[]> = {
     { id: 'emma-4', asset: 'Invesco Nasdaq 100 ETF', ticker: 'QQQ', category: 'Index fund', allocatedUSD: 14600, unrealizedReturnPct: 9.59, currentValueUSD: 16000, color: '#B9C8C1' },
     { id: 'emma-5', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 15300, unrealizedReturnPct: 4.58, currentValueUSD: 16000, color: '#E3E8D6' },
   ],
+}
+
+const cashByEmail: Record<string, number> = {
+  // Edit here to change withdrawable cash. Fully invested accounts should be 0.
+  'sahowe716@gmail.com': 0,
+  'rochellehowe@gmail.com': 0,
+  'squadbeta130@gmail.com': 25000,
+  'ava.morgan@gmail.com': 26400,
+  'liam.carter@gmail.com': 28750,
+  'sommerwilliams90@gmail.com': 12000,
+  'noah.williams@gmail.com': 0,
+  'emma.thompson@gmail.com': 0,
 }
 
 const CHART_POINTS = 7
@@ -198,7 +209,7 @@ export default function ProfessionalDashboard() {
     [livePositions],
   )
   const principal = useMemo(() => positions.reduce((sum, item) => sum + item.allocatedUSD, 0), [positions])
-  const cash = user?.accountBalance || 0
+  const cash = cashByEmail[user?.email.toLowerCase() || ''] ?? user?.accountBalance ?? 0
   const portfolioTotal = invested + cash
   const gain = invested - principal
   const returnPercent = principal > 0 ? (gain / principal) * 100 : 0
@@ -273,14 +284,18 @@ export default function ProfessionalDashboard() {
         router.replace('/signin')
         return
       }
-      setUser({
+      const email = String(stored.email).toLowerCase()
+      const accountBalance = email in cashByEmail ? cashByEmail[email] : (typeof stored.accountBalance === 'number' ? stored.accountBalance : 0)
+      const profile = {
         id: stored.id,
         email: stored.email,
         fullName: stored.fullName,
         role: stored.role || 'investor',
         kycStatus: stored.kycStatus || 'approved',
-        accountBalance: typeof stored.accountBalance === 'number' ? stored.accountBalance : 0,
-      })
+        accountBalance,
+      }
+      setUser(profile)
+      localStorage.setItem('user', JSON.stringify(profile))
     } catch {
       localStorage.removeItem('user')
       router.replace('/signin')
@@ -453,7 +468,7 @@ export default function ProfessionalDashboard() {
 
         <section className="mt-5 grid gap-4 sm:grid-cols-3">
           <Metric label="Invested assets" value={usd.format(invested)} note={livePositions.length ? `${livePositions.length} holdings · live` : 'No holdings yet'} />
-          <Metric label="Available cash" value={showBalance ? usd.format(user.accountBalance) : '••••••'} note="Ready to withdraw" />
+          <Metric label="Available cash" value={showBalance ? usd.format(cash) : '••••••'} note={cash > 0 ? 'Ready to withdraw' : 'Fully invested'} />
           <Metric label="Total gain" value={`${gain >= 0 ? '+' : ''}${usd.format(gain)}`} note={`${returnPercent >= 0 ? '+' : ''}${returnPercent.toFixed(2)}% since investing`} positive={gain >= 0} />
         </section>
 
@@ -536,7 +551,7 @@ export default function ProfessionalDashboard() {
       <DepositModal open={depositOpen} onClose={() => setDepositOpen(false)} />
       <WithdrawalDialog
         open={withdrawOpen}
-        available={user.accountBalance}
+        available={cash}
         onClose={() => setWithdrawOpen(false)}
         onComplete={completeWithdrawal}
       />
