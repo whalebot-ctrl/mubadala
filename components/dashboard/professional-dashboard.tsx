@@ -58,9 +58,9 @@ const portfolioByEmail: Record<string, Position[]> = {
   // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
   'sahowe716@gmail.com': [
     { id: 'sahowe716-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 2650, unrealizedReturnPct: 45.28, currentValueUSD: 3815, color: '#D5F26A' },
-    { id: 'sahowe716-2', asset: 'XRP', ticker: 'XRP', category: 'Digital asset', allocatedUSD: 450, unrealizedReturnPct: 35.56, currentValueUSD: 480, color: '#8FAE9F' },
-    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 750, unrealizedReturnPct: 29.33, currentValueUSD: 840, color: '#E3E8D6' },
-    { id: 'sahowe716-4', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 1150, unrealizedReturnPct: 36.52, currentValueUSD: 1390, color: '#527064' },
+    { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 450, unrealizedReturnPct: 35.56, currentValueUSD: 350, color: '#8FAE9F' },
+    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 750, unrealizedReturnPct: 29.33, currentValueUSD: 1420, color: '#E3E8D6' },
+    { id: 'sahowe716-4', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 1150, unrealizedReturnPct: 36.52, currentValueUSD: 1748, color: '#527064' },
   ],
   'rochellehowe@gmail.com': [],
   'ava.morgan@gmail.com': [
