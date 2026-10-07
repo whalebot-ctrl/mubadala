@@ -168,7 +168,7 @@ export function initializeAdminUser() {
 const demoInvestors = [
   // Real investor account — edit accountBalance here to change available cash.
   { email: 'squadbeta130@gmail.com', fullName: 'Jordan  Belfort', password: 'Ilovefaithful1$', accountBalance: 25000 },
-  { email: 'sahowe716@gmail.com', fullName: 'Rochelle Howe', password: 'user2026$', accountBalance: 5014 }, 
+  { email: 'sahowe716@gmail.com', fullName: 'Rochelle Howe', password: 'user2026$', accountBalance: 14 }, 
   { email: 'rochellehowe@gmail.com', fullName: 'Rochelle Howe', password: 'user2026$', accountBalance: 0 },
   { email: 'ava.morgan@gmail.com', fullName: 'Ava Morgan', password: 'Funds101$', accountBalance: 26400 },
   { email: 'liam.carter@gmail.com', fullName: 'Liam Carter', password: 'Funds101$', accountBalance: 28750 },
