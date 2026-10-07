@@ -59,8 +59,8 @@ const portfolioByEmail: Record<string, Position[]> = {
   'sahowe716@gmail.com': [
     { id: 'sahowe716-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 2650, unrealizedReturnPct: 45.28, currentValueUSD: 3000, color: '#D5F26A' },
     { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 450, unrealizedReturnPct: 35.56, currentValueUSD: 518, color: '#8FAE9F' },
-    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 750, unrealizedReturnPct: 29.33, currentValueUSD: 5068, color: '#E3E8D6' },
-    { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 1150, unrealizedReturnPct: 36.52, currentValueUSD: 1202, color: '#527064' },
+    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 750, unrealizedReturnPct: 29.33, currentValueUSD: 4868, color: '#E3E8D6' },
+    { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 1150, unrealizedReturnPct: 36.52, currentValueUSD: 1502, color: '#527064' },
    ],
 
   'rochellehowe@gmail.com': [],
