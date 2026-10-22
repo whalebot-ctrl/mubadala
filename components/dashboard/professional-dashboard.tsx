@@ -110,7 +110,7 @@ const portfolioByEmail: Record<string, Position[]> = {
 
 const cashByEmail: Record<string, number> = {
   // Edit here to change withdrawable cash. Fully invested accounts should be 0.
-  'sahowe716@gmail.com': 9014,
+  'sahowe716@gmail.com': 40014,
   'rochellehowe@gmail.com': 0,
   'squadbeta130@gmail.com': 25000,
   'ava.morgan@gmail.com': 26400,
