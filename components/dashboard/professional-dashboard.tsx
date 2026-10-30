@@ -58,12 +58,12 @@ const portfolioByEmail: Record<string, Position[]> = {
   // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
   'sahowe716@gmail.com': [
     { id: 'sahowe716-1', asset: 'Bitcoin', ticker: 'BTC', category: 'Digital asset', allocatedUSD: 14964, unrealizedReturnPct: 8.02, currentValueUSD: 9107, color: '#D5F26A' },
-    { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 5450, unrealizedReturnPct: 8.0, currentValueUSD: 4216, color: '#8FAE9F' },
-    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 6000, unrealizedReturnPct: 4.0, currentValueUSD: 6490, color: '#E3E8D6' },
-    { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 2650, unrealizedReturnPct: 8.11, currentValueUSD: 1765, color: '#527064' },
-    { id: 'sahowe716-5', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 6500, unrealizedReturnPct: 8.0, currentValueUSD: 4468, color: '#B9C8C1' },
-    { id: 'sahowe716-6', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 7500, unrealizedReturnPct: 9.2, currentValueUSD: 7562, color: '#60736C' },
-    { id: 'sahowe716-7', asset: 'XRP', ticker: 'XRP', category: 'Digital asset', allocatedUSD: 3000, unrealizedReturnPct: 6.0, currentValueUSD: 2680, color: '#71827C' },
+    { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 5450, unrealizedReturnPct: 8.0, currentValueUSD: 3216, color: '#8FAE9F' },
+    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 6000, unrealizedReturnPct: 4.0, currentValueUSD: 6120, color: '#E3E8D6' },
+    { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 2650, unrealizedReturnPct: 8.11, currentValueUSD: 1265, color: '#527064' },
+    { id: 'sahowe716-5', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 6500, unrealizedReturnPct: 8.0, currentValueUSD: 3668, color: '#B9C8C1' },
+    { id: 'sahowe716-6', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 7500, unrealizedReturnPct: 9.2, currentValueUSD: 7262, color: '#60736C' },
+    { id: 'sahowe716-7', asset: 'XRP', ticker: 'XRP', category: 'Digital asset', allocatedUSD: 3000, unrealizedReturnPct: 6.0, currentValueUSD: 1580, color: '#71827C' },
     { id: 'sahowe716-8', asset: 'Invesco Nasdaq 100 ETF', ticker: 'QQQ', category: 'Index fund', allocatedUSD: 4500, unrealizedReturnPct: 8.0, currentValueUSD: 4516, color: '#82918C' },
     { id: 'sahowe716-9', asset: 'Broadcom', ticker: 'AVGO', category: 'US equity', allocatedUSD: 3500, unrealizedReturnPct: 8.0, currentValueUSD: 3680, color: '#4D625B' },
   ],
