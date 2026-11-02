@@ -58,7 +58,7 @@ const portfolioByEmail: Record<string, Position[]> = {
   // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
   'sahowe716@gmail.com': [
     { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 5719, unrealizedReturnPct: -29.99, currentValueUSD: 4004, color: '#8FAE9F' },
-    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 6296, unrealizedReturnPct: 61.53, currentValueUSD: 10171, color: '#E3E8D6' },
+    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 6296, unrealizedReturnPct: 61.53, currentValueUSD: 11838, color: '#E3E8D6' },
     { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 6703, unrealizedReturnPct: -44.52, currentValueUSD: 3717, color: '#527064' },
     { id: 'sahowe716-5', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 13893, unrealizedReturnPct: -41.34, currentValueUSD: 9369, color: '#B9C8C1' },
     { id: 'sahowe716-6', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 7870, unrealizedReturnPct: -3.15, currentValueUSD: 7620, color: '#60736C' },
