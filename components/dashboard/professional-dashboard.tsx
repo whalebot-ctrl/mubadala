@@ -57,14 +57,14 @@ const defaultPositions: Position[] = []
 const portfolioByEmail: Record<string, Position[]> = {
   // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
   'sahowe716@gmail.com': [
-    { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 6123, unrealizedReturnPct: -29.99, currentValueUSD: 4887, color: '#8FAE9F' },
-    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 6741, unrealizedReturnPct: 88.01, currentValueUSD: 14613, color: '#E3E8D6' },
-    { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 7177, unrealizedReturnPct: -44.52, currentValueUSD: 3980, color: '#527064' },
-    { id: 'sahowe716-5', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 14874, unrealizedReturnPct: -41.34, currentValueUSD: 10031, color: '#B9C8C1' },
-    { id: 'sahowe716-6', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 8426, unrealizedReturnPct: -3.15, currentValueUSD: 8159, color: '#60736C' },
-    { id: 'sahowe716-7', asset: 'XRP', ticker: 'XRP', category: 'Digital asset', allocatedUSD: 8419, unrealizedReturnPct: -33.92, currentValueUSD: 5906, color: '#71827C' },
-    { id: 'sahowe716-8', asset: 'Invesco Nasdaq 100 ETF', ticker: 'QQQ', category: 'Index fund', allocatedUSD: 5055, unrealizedReturnPct: 0.36, currentValueUSD: 5245, color: '#82918C' },
-    { id: 'sahowe716-9', asset: 'Broadcom', ticker: 'AVGO', category: 'US equity', allocatedUSD: 3933, unrealizedReturnPct: 5.09, currentValueUSD: 4603, color: '#4D625B' },
+    { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 5444, unrealizedReturnPct: -4.56, currentValueUSD: 5196, color: '#8FAE9F' },
+    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 5992, unrealizedReturnPct: 158.91, currentValueUSD: 15514, color: '#E3E8D6' },
+    { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 6379, unrealizedReturnPct: -33.72, currentValueUSD: 4228, color: '#527064' },
+    { id: 'sahowe716-5', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 13227, unrealizedReturnPct: -19.42, currentValueUSD: 10658, color: '#B9C8C1' },
+    { id: 'sahowe716-6', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 7489, unrealizedReturnPct: 15.74, currentValueUSD: 8668, color: '#60736C' },
+    { id: 'sahowe716-7', asset: 'XRP', ticker: 'XRP', category: 'Digital asset', allocatedUSD: 7483, unrealizedReturnPct: -16.16, currentValueUSD: 6274, color: '#71827C' },
+    { id: 'sahowe716-8', asset: 'Invesco Nasdaq 100 ETF', ticker: 'QQQ', category: 'Index fund', allocatedUSD: 4492, unrealizedReturnPct: 24.04, currentValueUSD: 5572, color: '#82918C' },
+    { id: 'sahowe716-9', asset: 'Broadcom', ticker: 'AVGO', category: 'US equity', allocatedUSD: 3494, unrealizedReturnPct: 39.95, currentValueUSD: 4890, color: '#4D625B' },
   ],
 
   'rochellehowe@gmail.com': [],
