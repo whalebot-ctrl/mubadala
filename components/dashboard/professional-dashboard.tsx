@@ -57,10 +57,10 @@ const defaultPositions: Position[] = []
 const portfolioByEmail: Record<string, Position[]> = {
   // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
   'sahowe716@gmail.com': [
-    { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 5444, unrealizedReturnPct: -4.56, currentValueUSD: 4896, color: '#8FAE9F' },
+    { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 5444, unrealizedReturnPct: -4.56, currentValueUSD: 5036, color: '#8FAE9F' },
     { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 5992, unrealizedReturnPct: 158.91, currentValueUSD: 15514, color: '#E3E8D6' },
     { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 6379, unrealizedReturnPct: -33.72, currentValueUSD: 4228, color: '#527064' },
-    { id: 'sahowe716-5', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 13227, unrealizedReturnPct: -19.42, currentValueUSD: 9603, color: '#B9C8C1' },
+    { id: 'sahowe716-5', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 13227, unrealizedReturnPct: -19.42, currentValueUSD: 10203, color: '#B9C8C1' },
     { id: 'sahowe716-6', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 7489, unrealizedReturnPct: 15.74, currentValueUSD: 8668, color: '#60736C' },
     { id: 'sahowe716-7', asset: 'XRP', ticker: 'XRP', category: 'Digital asset', allocatedUSD: 7483, unrealizedReturnPct: -16.16, currentValueUSD: 6274, color: '#71827C' },
     { id: 'sahowe716-8', asset: 'Invesco Nasdaq 100 ETF', ticker: 'QQQ', category: 'Index fund', allocatedUSD: 4492, unrealizedReturnPct: 24.04, currentValueUSD: 5572, color: '#82918C' },
