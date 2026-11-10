@@ -126,7 +126,7 @@ export function ZecPortfolioPanel({
               </p>
             </div>
             <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5 text-[11px] text-white/55">
-              USD
+              Live · USD
             </span>
           </div>
           <div className="mt-7 h-52 sm:h-60">
