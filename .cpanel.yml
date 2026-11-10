@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/thesvpoc/public_html/
+    - export DEPLOYPATH=/home/thesvpoc/sterlinridge.com/
     - /bin/cp -R * $DEPLOYPATH
