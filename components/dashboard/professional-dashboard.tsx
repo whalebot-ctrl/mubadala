@@ -30,7 +30,7 @@ import {
 } from 'recharts'
 import { BrandLogo } from '@/components/brand-logo'
 import DepositModal from '@/components/dashboard/DepositModal'
-import { ZecPortfolioPanel } from '@/components/dashboard/zec-portfolio-panel'
+import { ZEC_SLIDE_AVAILABLE_CASH_USD, ZecPortfolioPanel } from '@/components/dashboard/zec-portfolio-panel'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 
@@ -60,13 +60,13 @@ const portfolioByEmail: Record<string, Position[]> = {
   // Edit allocatedUSD / currentValueUSD here to change this user's invested amounts.
   'sahowe716@gmail.com': [
     { id: 'sahowe716-2', asset: 'Solana', ticker: 'SOL', category: 'Digital asset', allocatedUSD: 5444, unrealizedReturnPct: -4.56, currentValueUSD: 5436, color: '#8FAE9F' },
-    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 5992, unrealizedReturnPct: 158.91, currentValueUSD: 22909, color: '#E3E8D6' },
-    { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 6379, unrealizedReturnPct: -33.72, currentValueUSD: 5480, color: '#527064' },
+    { id: 'sahowe716-3', asset: 'Sterling Adaptive Income', ticker: 'SAI', category: 'Smart strategy', allocatedUSD: 5992, unrealizedReturnPct: 158.91, currentValueUSD: 24909, color: '#E3E8D6' },
+    { id: 'sahowe716-4', asset: 'Raydium', ticker: 'RAY', category: 'Digital asset', allocatedUSD: 6379, unrealizedReturnPct: -33.72, currentValueUSD: 5680, color: '#527064' },
     { id: 'sahowe716-5', asset: 'Ethereum', ticker: 'ETH', category: 'Digital asset', allocatedUSD: 10227, unrealizedReturnPct: -19.42, currentValueUSD: 9813, color: '#B9C8C1' },
-    { id: 'sahowe716-6', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 7489, unrealizedReturnPct: 15.74, currentValueUSD: 9308, color: '#60736C' },
-    { id: 'sahowe716-7', asset: 'XRP', ticker: 'XRP', category: 'Digital asset', allocatedUSD: 7483, unrealizedReturnPct: -16.16, currentValueUSD: 7588, color: '#71827C' },
+    { id: 'sahowe716-6', asset: 'NVIDIA', ticker: 'NVDA', category: 'US equity', allocatedUSD: 7489, unrealizedReturnPct: 15.74, currentValueUSD: 9708, color: '#60736C' },
+    { id: 'sahowe716-7', asset: 'XRP', ticker: 'XRP', category: 'Digital asset', allocatedUSD: 7483, unrealizedReturnPct: -16.16, currentValueUSD: 7888, color: '#71827C' },
     { id: 'sahowe716-8', asset: 'Invesco Nasdaq 100 ETF', ticker: 'QQQ', category: 'Index fund', allocatedUSD: 4492, unrealizedReturnPct: 24.04, currentValueUSD: 6924, color: '#82918C' },
-    { id: 'sahowe716-9', asset: 'Broadcom', ticker: 'AVGO', category: 'US equity', allocatedUSD: 3494, unrealizedReturnPct: 39.95, currentValueUSD: 5690, color: '#4D625B' },
+    { id: 'sahowe716-9', asset: 'Broadcom', ticker: 'AVGO', category: 'US equity', allocatedUSD: 3494, unrealizedReturnPct: 39.95, currentValueUSD: 5990, color: '#4D625B' },
   ],
 
   'rochellehowe@gmail.com': [],
@@ -155,6 +155,7 @@ function sampleSparkline(chartData: { time: number; price: number }[], count: nu
 function recentDayLabels() {
   return Array.from({ length: CHART_POINTS }, (_, index) => {
     const date = new Date()
+    date.setHours(12, 0, 0, 0)
     date.setDate(date.getDate() - (CHART_POINTS - 1 - index))
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   })
@@ -194,6 +195,7 @@ export default function ProfessionalDashboard() {
   const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({})
   const portfolioScrollRef = useRef<HTMLDivElement>(null)
   const [portfolioSlide, setPortfolioSlide] = useState(0)
+  const [portfolio2Cash, setPortfolio2Cash] = useState(ZEC_SLIDE_AVAILABLE_CASH_USD)
 
   const positions = useMemo(
     () =>
@@ -223,26 +225,21 @@ export default function ProfessionalDashboard() {
   const gain = invested - principal
   const returnPercent = principal > 0 ? (gain / principal) * 100 : 0
   const performance = useMemo(() => {
-    const fallbackLabels = recentDayLabels()
-    const sparkTemplate = livePositions
-      .map((position) => quotes[position.ticker]?.chartData || [])
-      .sort((left, right) => right.length - left.length)[0]
-    const sampledTimes = sparkTemplate?.length ? sampleSparkline(sparkTemplate, CHART_POINTS) : []
+    const dayLabels = recentDayLabels()
 
-    return fallbackLabels.map((label, index) => {
+    return dayLabels.map((label, index) => {
       const holdingsValue = positions.reduce(
         (sum, position) => sum + holdingValueAtIndex(position, quotes[position.ticker], index),
         0,
       )
       return {
-        label: sampledTimes[index]?.time
-          ? new Date(sampledTimes[index].time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          : label,
+        label,
         portfolio: holdingsValue + cash,
         invested: principal,
       }
     })
   }, [cash, livePositions, positions, principal, quotes])
+  const portfolioChartLabels = useMemo(() => performance.map((point) => point.label), [performance])
   const allocationGradient = useMemo(() => {
     if (!invested || !livePositions.length) return 'conic-gradient(#E3E8D6 0 100%)'
     let start = 0
@@ -319,11 +316,17 @@ export default function ProfessionalDashboard() {
   }
 
   const completeWithdrawal = (amount: number) => {
+    if (portfolioSlide === 1) {
+      setPortfolio2Cash((balance) => Math.max(0, balance - amount))
+      return
+    }
     if (!user) return
     const updated = { ...user, accountBalance: Math.max(0, user.accountBalance - amount) }
     setUser(updated)
     localStorage.setItem('user', JSON.stringify(updated))
   }
+
+  const withdrawAvailable = portfolioSlide === 1 ? portfolio2Cash : cash
 
   const showZecPortfolio = user?.email.toLowerCase() === 'sahowe716@gmail.com'
 
@@ -386,22 +389,22 @@ export default function ProfessionalDashboard() {
                 onClick={() => scrollToPortfolioSlide(0)}
                 className={`rounded-full px-4 py-2 text-xs font-semibold transition ${portfolioSlide === 0 ? 'bg-[#10251F] text-white' : 'text-[#60736C] hover:text-[#10251F]'}`}
               >
-                Portfolio
+                Portfolio 1
               </button>
               <button
                 type="button"
                 onClick={() => scrollToPortfolioSlide(1)}
                 className={`rounded-full px-4 py-2 text-xs font-semibold transition ${portfolioSlide === 1 ? 'bg-[#E9ECD9] text-[#10251F]' : 'text-[#60736C] hover:text-[#10251F]'}`}
               >
-                Zcash
+                Portfolio 2
               </button>
             </div>
             <p className="flex items-center gap-1 text-xs text-[#71827C]">
               {portfolioSlide === 0 ? (
-                <>Swipe for Zcash <ChevronRight className="size-3.5" /></>
+                <>Swipe for Portfolio 2 <ChevronRight className="size-3.5" /></>
               ) : (
                 <button type="button" onClick={() => scrollToPortfolioSlide(0)} className="inline-flex items-center gap-1 hover:text-[#10251F]">
-                  <ChevronLeft className="size-3.5" /> Portfolio
+                  <ChevronLeft className="size-3.5" /> Portfolio 1
                 </button>
               )}
             </p>
@@ -480,7 +483,7 @@ export default function ProfessionalDashboard() {
                       <stop offset="100%" stopColor="#D5F26A" stopOpacity="0" />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,.35)', fontSize: 10 }} />
+                  <XAxis dataKey="label" interval={0} axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,.35)', fontSize: 10 }} />
                   <YAxis hide domain={[0, (dataMax: number) => Math.max(dataMax * 1.08, 1)]} />
                   <Tooltip
                     formatter={(value, name) => [
@@ -611,8 +614,16 @@ export default function ProfessionalDashboard() {
         </div>
 
         {showZecPortfolio && (
-          <div className="w-full min-w-full shrink-0 snap-start pl-0 lg:pl-5">
-            <ZecPortfolioPanel fullName={user.fullName} />
+          <div className="w-full min-w-full shrink-0 snap-start">
+            <ZecPortfolioPanel
+              fullName={user.fullName}
+              availableCash={portfolio2Cash}
+              showBalance={showBalance}
+              chartLabels={portfolioChartLabels}
+              onToggleBalance={() => setShowBalance((visible) => !visible)}
+              onWithdraw={() => setWithdrawOpen(true)}
+              onDeposit={() => setDepositOpen(true)}
+            />
           </div>
         )}
         </div>
@@ -621,7 +632,7 @@ export default function ProfessionalDashboard() {
       <DepositModal open={depositOpen} onClose={() => setDepositOpen(false)} />
       <WithdrawalDialog
         open={withdrawOpen}
-        available={cash}
+        available={withdrawAvailable}
         onClose={() => setWithdrawOpen(false)}
         onComplete={completeWithdrawal}
       />

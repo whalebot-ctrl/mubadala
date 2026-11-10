@@ -1,26 +1,30 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
+import {
+  ArrowDownToLine,
+  ArrowRight,
+  ArrowUpRight,
+  ChevronRight,
+  Eye,
+  EyeOff,
+  Plus,
+  ShieldCheck,
+} from 'lucide-react'
 import {
   Area,
   AreaChart,
-  CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts'
-import { Eye, EyeOff } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 
-/** Cash on the Zcash account (second dashboard panel). */
+/** Cash on Portfolio 2. */
 export const ZEC_SLIDE_AVAILABLE_CASH_USD = 50_000
-
-type ZecQuote = {
-  price: number
-  percentChange: number
-  chartData: { time: number; price: number }[]
-}
 
 const usd = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -28,181 +32,217 @@ const usd = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2,
 })
 
-function formatChartTime(time: number) {
-  return new Date(time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+type Props = {
+  fullName: string
+  availableCash: number
+  showBalance: boolean
+  chartLabels: string[]
+  onToggleBalance: () => void
+  onWithdraw: () => void
+  onDeposit: () => void
 }
 
-export function ZecPortfolioPanel({ fullName }: { fullName: string }) {
-  const [showBalance, setShowBalance] = useState(true)
+export function ZecPortfolioPanel({
+  fullName,
+  availableCash,
+  showBalance,
+  chartLabels,
+  onToggleBalance,
+  onWithdraw,
+  onDeposit,
+}: Props) {
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [quote, setQuote] = useState<ZecQuote | null>(null)
+  const invested = 0
+  const principal = 0
+  const portfolioTotal = invested + availableCash
+  const gain = 0
+  const returnPercent = 0
 
-  const investedAssets = 0
-  const availableCash = ZEC_SLIDE_AVAILABLE_CASH_USD
-  const totalPortfolio = investedAssets + availableCash
-
-  useEffect(() => {
-    let cancelled = false
-
-    const load = async () => {
-      try {
-        const response = await fetch('/api/markets', { cache: 'no-store' })
-        const data = await response.json()
-        const zec = (data.assets || []).find((asset: { symbol: string }) => asset.symbol === 'ZEC')
-        if (!zec?.price) {
-          if (!cancelled) setError('Zcash market data is temporarily unavailable.')
-          return
-        }
-        if (!cancelled) {
-          setQuote({
-            price: Number(zec.price),
-            percentChange: Number(zec.percentChange) || 0,
-            chartData: Array.isArray(zec.chartData) ? zec.chartData : [],
-          })
-          setError('')
-        }
-      } catch {
-        if (!cancelled) setError('Could not load live ZEC prices.')
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-
-    load()
-    const timer = window.setInterval(load, 45_000)
-    return () => {
-      cancelled = true
-      window.clearInterval(timer)
-    }
-  }, [])
-
-  const priceChart = useMemo(
+  const performance = useMemo(
     () =>
-      quote?.chartData.map((point) => ({
-        label: formatChartTime(point.time),
-        price: point.price,
-      })) || [],
-    [quote],
+      chartLabels.map((label) => ({
+        label,
+        portfolio: portfolioTotal,
+        invested: principal,
+      })),
+    [chartLabels, portfolioTotal, principal],
   )
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 400)
+    return () => window.clearTimeout(timer)
+  }, [])
+
   if (loading) {
-    return (
-      <div className="min-h-[70vh] animate-pulse rounded-[32px] border border-[#10251F]/10 bg-white/75 p-8">
-        <div className="h-6 w-48 rounded bg-[#10251F]/10" />
-        <div className="mt-8 h-64 rounded-3xl bg-[#F4F5EF]" />
-      </div>
-    )
+    return <div className="min-h-[70vh] animate-pulse rounded-[32px] bg-[#F4F5EF]/50" />
   }
 
   return (
-    <div className="min-h-[70vh] text-[#10251F]">
-      <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <>
+      <section className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-medium text-[#60736C]">Zcash account</p>
-          <h1 className="mt-3 text-4xl font-medium tracking-[-0.045em]">{fullName}</h1>
+          <p className="flex items-center gap-2 text-xs font-medium text-[#60736C]">
+            <ShieldCheck className="size-3.5" /> Account protected
+          </p>
+          <h1 className="mt-3 text-4xl font-medium tracking-[-0.045em]">
+            Welcome back, {fullName}.
+          </h1>
+          <p className="mt-2 text-sm text-[#60736C]">A clear view of your money and investments.</p>
         </div>
-        {quote && (
-          <div className="text-left sm:text-right">
-            <p className="text-xs text-[#71827C]">ZEC</p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums">{usd.format(quote.price)}</p>
-            <p className={`text-xs font-semibold ${quote.percentChange >= 0 ? 'text-[#64820F]' : 'text-[#B4533A]'}`}>
-              {quote.percentChange >= 0 ? '+' : ''}{quote.percentChange.toFixed(2)}% today
-            </p>
-          </div>
-        )}
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={onWithdraw}
+            className="h-11 rounded-full border-[#10251F]/15 bg-transparent px-5 hover:bg-white"
+          >
+            <ArrowDownToLine /> Withdraw
+          </Button>
+          <Button onClick={onDeposit} className="h-11 rounded-full bg-[#10251F] px-5 text-white hover:bg-[#1B3B31]">
+            <Plus /> Add funds
+          </Button>
+        </div>
       </section>
-
-      {error && (
-        <p className="mt-4 rounded-xl border border-[#B4533A]/30 bg-[#FEF2F0] p-3 text-sm text-[#B4533A]">{error}</p>
-      )}
 
       <section className="mt-8 grid gap-5 lg:grid-cols-[1.45fr_.55fr]">
         <Card className="overflow-hidden rounded-[32px] border-0 bg-[#10251F] p-6 text-white shadow-none sm:p-8">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-2 text-xs font-medium text-white/50">
                 Total portfolio
                 <button
                   type="button"
-                  onClick={() => setShowBalance((v) => !v)}
-                  className="text-white/45 hover:text-white"
+                  onClick={onToggleBalance}
                   aria-label={showBalance ? 'Hide balance' : 'Show balance'}
+                  className="text-white/45 hover:text-white"
                 >
                   {showBalance ? <Eye className="size-3.5" /> : <EyeOff className="size-3.5" />}
                 </button>
               </div>
               <p className="mt-3 text-4xl font-medium tracking-[-0.04em] sm:text-5xl">
-                {showBalance ? usd.format(totalPortfolio) : '••••••••'}
+                {showBalance ? usd.format(portfolioTotal) : '••••••••'}
+              </p>
+              <p className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-[#D5F26A]">
+                <ArrowUpRight className="size-4" /> {returnPercent >= 0 ? '+' : ''}{returnPercent.toFixed(2)}% all time
               </p>
             </div>
-            <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5 text-[11px] text-white/55">USD</span>
+            <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5 text-[11px] text-white/55">
+              USD
+            </span>
           </div>
-
           <div className="mt-7 h-52 sm:h-60">
-            {priceChart.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={priceChart}>
-                  <defs>
-                    <linearGradient id="zecSlidePriceArea" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#D5F26A" stopOpacity={0.3} />
-                      <stop offset="100%" stopColor="#D5F26A" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid stroke="rgba(255,255,255,.08)" vertical={false} />
-                  <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,.35)', fontSize: 10 }} interval="preserveStartEnd" minTickGap={32} />
-                  <YAxis hide domain={['auto', 'auto']} />
-                  <Tooltip
-                    formatter={(value) => [usd.format(Number(value)), 'ZEC']}
-                    contentStyle={{ border: 0, borderRadius: 12, background: '#F4F5EF', color: '#10251F' }}
-                  />
-                  <Area type="monotone" dataKey="price" stroke="#D5F26A" strokeWidth={2.5} fill="url(#zecSlidePriceArea)" isAnimationActive={false} />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : null}
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={performance} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="portfolio2Area" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#D5F26A" stopOpacity=".3" />
+                    <stop offset="100%" stopColor="#D5F26A" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="label" interval={0} axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,.35)', fontSize: 10 }} />
+                <YAxis hide domain={[0, (dataMax: number) => Math.max(dataMax * 1.08, 1)]} />
+                <Tooltip
+                  formatter={(value) => [usd.format(Number(value)), 'Portfolio']}
+                  contentStyle={{ border: 0, borderRadius: 12, background: '#F4F5EF', color: '#10251F' }}
+                />
+                <Area type="monotone" dataKey="portfolio" stroke="#D5F26A" strokeWidth={2.5} fill="url(#portfolio2Area)" isAnimationActive={false} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </Card>
 
         <Card className="rounded-[32px] border border-[#10251F]/10 bg-white/75 p-6 shadow-none">
-          <h2 className="font-semibold">Balances</h2>
-          <dl className="mt-6 space-y-5 text-sm">
-            <div className="flex justify-between gap-4">
-              <dt className="text-[#60736C]">Available cash</dt>
-              <dd className="font-semibold tabular-nums">{usd.format(availableCash)}</dd>
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold">Allocation</h2>
+            <span className="text-xs text-[#71827C]">Current value</span>
+          </div>
+          <div className="mx-auto mt-7 flex size-40 items-center justify-center rounded-full bg-[#E3E8D6]">
+            <div className="flex size-24 flex-col items-center justify-center rounded-full bg-[#F9FAF6]">
+              <span className="text-xs text-[#71827C]">Invested</span>
+              <strong className="mt-1 text-lg">{usd.format(invested).replace('.00', '')}</strong>
             </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-[#60736C]">Invested assets</dt>
-              <dd className="font-semibold tabular-nums">{usd.format(investedAssets)}</dd>
-            </div>
-          </dl>
+          </div>
+          <div className="mt-7 space-y-3">
+            <p className="text-xs text-[#71827C]">No allocations yet.</p>
+          </div>
         </Card>
       </section>
 
       <section className="mt-5 grid gap-4 sm:grid-cols-3">
-        <Metric label="Invested assets" value={usd.format(investedAssets)} note="No holdings" />
-        <Metric label="Available cash" value={showBalance ? usd.format(availableCash) : '••••••'} note="Ready to withdraw" />
-        <Metric label="Total gain" value={usd.format(0)} note="0.00% since investing" />
+        <PanelMetric label="Invested assets" value={usd.format(invested)} note="No holdings yet" />
+        <PanelMetric
+          label="Available cash"
+          value={showBalance ? usd.format(availableCash) : '••••••'}
+          note="Ready to withdraw"
+        />
+        <PanelMetric label="Total gain" value={`+${usd.format(gain)}`} note="+0.00% since investing" positive />
       </section>
 
-      <Card className="mt-10 overflow-hidden rounded-[28px] border border-[#10251F]/10 bg-white/75 shadow-none">
-        <div className="border-b border-[#10251F]/10 px-5 py-5 sm:px-6">
-          <h2 className="font-semibold">Your investments</h2>
-          <p className="mt-1 text-xs text-[#71827C]">Current holdings</p>
-        </div>
-        <div className="px-6 py-16 text-center">
-          <p className="font-semibold">No investments yet</p>
-          <p className="mt-2 text-sm text-[#71827C]">Add funds to start building your portfolio.</p>
-        </div>
-      </Card>
-    </div>
+      <section className="mt-10 grid gap-5 lg:grid-cols-[1fr_300px]">
+        <Card className="overflow-hidden rounded-[28px] border border-[#10251F]/10 bg-white/75 shadow-none">
+          <div className="flex items-center justify-between border-b border-[#10251F]/10 px-5 py-5 sm:px-6">
+            <div>
+              <h2 className="font-semibold">Your investments</h2>
+              <p className="mt-1 text-xs text-[#71827C]">Current holdings and performance</p>
+            </div>
+            <Link href="/trade" className="flex items-center gap-1 text-xs font-semibold text-[#527064]">
+              Open Trade <ChevronRight className="size-3.5" />
+            </Link>
+          </div>
+          <div className="px-6 py-16 text-center">
+            <p className="font-semibold">No investments yet</p>
+            <p className="mt-2 text-sm text-[#71827C]">Add funds to start building your portfolio.</p>
+          </div>
+        </Card>
+
+        <Card className="rounded-[28px] border border-[#10251F]/10 bg-[#E9ECD9] p-6 shadow-none">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#60736C]">Quick access</p>
+          <h2 className="mt-4 text-2xl font-medium tracking-[-0.03em]">Move money without the friction.</h2>
+          <p className="mt-3 text-sm leading-6 text-[#60736C]">
+            Add funds or request a withdrawal from your available cash balance.
+          </p>
+          <div className="mt-8 space-y-2">
+            <button
+              type="button"
+              onClick={onDeposit}
+              className="flex w-full items-center justify-between rounded-2xl bg-[#10251F] p-4 text-left text-white"
+            >
+              <span className="flex items-center gap-3 text-sm font-semibold">
+                <Plus className="size-4" /> Add funds
+              </span>
+              <ArrowRight className="size-4 text-white/50" />
+            </button>
+            <button
+              type="button"
+              onClick={onWithdraw}
+              className="flex w-full items-center justify-between rounded-2xl border border-[#10251F]/10 bg-white/60 p-4 text-left"
+            >
+              <span className="flex items-center gap-3 text-sm font-semibold">
+                <ArrowDownToLine className="size-4" /> Withdraw
+              </span>
+              <ArrowRight className="size-4 text-[#60736C]" />
+            </button>
+          </div>
+        </Card>
+      </section>
+    </>
   )
 }
 
-function Metric({ label, value, note }: { label: string; value: string; note: string }) {
+function PanelMetric({
+  label,
+  value,
+  note,
+  positive = false,
+}: {
+  label: string
+  value: string
+  note: string
+  positive?: boolean
+}) {
   return (
     <Card className="rounded-2xl border border-[#10251F]/10 bg-white/65 p-5 shadow-none">
       <p className="text-xs font-medium text-[#71827C]">{label}</p>
-      <p className="mt-3 text-2xl font-semibold tracking-[-0.03em]">{value}</p>
+      <p className={`mt-3 text-2xl font-semibold tracking-[-0.03em] ${positive ? 'text-[#64820F]' : ''}`}>{value}</p>
       <p className="mt-2 text-[11px] text-[#82918C]">{note}</p>
     </Card>
   )
