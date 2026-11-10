@@ -49,7 +49,7 @@ const REQUEST_TIMEOUT_MS = 7_000
 
 async function getCrypto(): Promise<MarketAsset[]> {
   const response = await fetch(
-    'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,binancecoin,ripple,dogecoin,cardano,avalanche-2,chainlink,polkadot,tron,shiba-inu,litecoin,bitcoin-cash,uniswap,stellar,sui,hedera-hashgraph,near,aptos,pepe,arbitrum,optimism,internet-computer,cosmos,the-open-network,render-token,aave,injective-protocol,ondo-finance&order=market_cap_desc&sparkline=true&price_change_percentage=24h',
+    'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,binancecoin,ripple,dogecoin,cardano,avalanche-2,chainlink,polkadot,tron,shiba-inu,litecoin,bitcoin-cash,uniswap,stellar,sui,hedera-hashgraph,near,aptos,pepe,arbitrum,optimism,internet-computer,cosmos,the-open-network,render-token,aave,injective-protocol,ondo-finance,zcash&order=market_cap_desc&sparkline=true&price_change_percentage=24h',
     {
       next: { revalidate: 30 },
       headers: { accept: 'application/json' },

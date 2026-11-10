@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   Bitcoin,
   Check,
+  ChevronLeft,
   ChevronRight,
   Eye,
   EyeOff,
@@ -29,6 +30,7 @@ import {
 } from 'recharts'
 import { BrandLogo } from '@/components/brand-logo'
 import DepositModal from '@/components/dashboard/DepositModal'
+import { ZecPortfolioPanel } from '@/components/dashboard/zec-portfolio-panel'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 
@@ -190,6 +192,8 @@ export default function ProfessionalDashboard() {
   const [depositOpen, setDepositOpen] = useState(false)
   const [withdrawOpen, setWithdrawOpen] = useState(false)
   const [quotes, setQuotes] = useState<Record<string, MarketQuote>>({})
+  const portfolioScrollRef = useRef<HTMLDivElement>(null)
+  const [portfolioSlide, setPortfolioSlide] = useState(0)
 
   const positions = useMemo(
     () =>
@@ -321,6 +325,23 @@ export default function ProfessionalDashboard() {
     localStorage.setItem('user', JSON.stringify(updated))
   }
 
+  const showZecPortfolio = user?.email.toLowerCase() === 'sahowe716@gmail.com'
+
+  const scrollToPortfolioSlide = (index: number) => {
+    const el = portfolioScrollRef.current
+    if (!el) return
+    const next = Math.max(0, Math.min(showZecPortfolio ? 1 : 0, index))
+    el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' })
+    setPortfolioSlide(next)
+  }
+
+  const onPortfolioScroll = () => {
+    const el = portfolioScrollRef.current
+    if (!el?.clientWidth) return
+    const index = Math.round(el.scrollLeft / el.clientWidth)
+    if (index !== portfolioSlide) setPortfolioSlide(index)
+  }
+
   if (loading || !user) return <DashboardSkeleton />
 
   return (
@@ -357,6 +378,42 @@ export default function ProfessionalDashboard() {
       </header>
 
       <main className="mx-auto max-w-7xl px-5 py-9 lg:px-8 lg:py-12">
+        {showZecPortfolio && (
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="inline-flex rounded-full border border-[#10251F]/10 bg-white/70 p-1">
+              <button
+                type="button"
+                onClick={() => scrollToPortfolioSlide(0)}
+                className={`rounded-full px-4 py-2 text-xs font-semibold transition ${portfolioSlide === 0 ? 'bg-[#10251F] text-white' : 'text-[#60736C] hover:text-[#10251F]'}`}
+              >
+                Portfolio
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToPortfolioSlide(1)}
+                className={`rounded-full px-4 py-2 text-xs font-semibold transition ${portfolioSlide === 1 ? 'bg-[#E9ECD9] text-[#10251F]' : 'text-[#60736C] hover:text-[#10251F]'}`}
+              >
+                Zcash
+              </button>
+            </div>
+            <p className="flex items-center gap-1 text-xs text-[#71827C]">
+              {portfolioSlide === 0 ? (
+                <>Swipe for Zcash <ChevronRight className="size-3.5" /></>
+              ) : (
+                <button type="button" onClick={() => scrollToPortfolioSlide(0)} className="inline-flex items-center gap-1 hover:text-[#10251F]">
+                  <ChevronLeft className="size-3.5" /> Portfolio
+                </button>
+              )}
+            </p>
+          </div>
+        )}
+
+        <div
+          ref={portfolioScrollRef}
+          onScroll={onPortfolioScroll}
+          className={`${showZecPortfolio ? 'flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : ''}`}
+        >
+        <div className={showZecPortfolio ? 'w-full min-w-full shrink-0 snap-start' : 'w-full'}>
         <section className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="flex items-center gap-2 text-xs font-medium text-[#60736C]">
@@ -551,6 +608,14 @@ export default function ProfessionalDashboard() {
             </div>
           </Card>
         </section>
+        </div>
+
+        {showZecPortfolio && (
+          <div className="w-full min-w-full shrink-0 snap-start pl-0 lg:pl-5">
+            <ZecPortfolioPanel fullName={user.fullName} />
+          </div>
+        )}
+        </div>
       </main>
 
       <DepositModal open={depositOpen} onClose={() => setDepositOpen(false)} />
