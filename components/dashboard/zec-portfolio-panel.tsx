@@ -26,9 +26,10 @@ import { Card } from '@/components/ui/card'
 
 export const ZEC_SLIDE_AVAILABLE_CASH_USD = 0
 export const PORTFOLIO2_ZEC_COST_USD = 50_000
+export const PORTFOLIO2_ZEC_CURRENT_USD = 54_295.31
 /** Trading profit from ZEC, held as Sterling Adaptive Income. */
-export const PORTFOLIO2_TRADING_PROFIT_USD = 7_000
-export const PORTFOLIO2_TOTAL_USD = PORTFOLIO2_ZEC_COST_USD + PORTFOLIO2_TRADING_PROFIT_USD
+export const PORTFOLIO2_TRADING_PROFIT_USD = 9_382.21
+export const PORTFOLIO2_TOTAL_USD = PORTFOLIO2_ZEC_CURRENT_USD + PORTFOLIO2_TRADING_PROFIT_USD
 
 type ZecQuote = {
   price: number
@@ -52,6 +53,7 @@ const usd = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
   minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
 })
 
 type Props = {
@@ -150,8 +152,8 @@ export function ZecPortfolioPanel({
         ticker: 'ZEC',
         category: 'Digital asset',
         allocatedUSD: PORTFOLIO2_ZEC_COST_USD,
-        currentValueUSD: PORTFOLIO2_ZEC_COST_USD,
-        unrealizedReturnPct: 0,
+        currentValueUSD: PORTFOLIO2_ZEC_CURRENT_USD,
+        unrealizedReturnPct: ((PORTFOLIO2_ZEC_CURRENT_USD - PORTFOLIO2_ZEC_COST_USD) / PORTFOLIO2_ZEC_COST_USD) * 100,
         color: '#527064',
         live: true,
       },
@@ -169,12 +171,9 @@ export function ZecPortfolioPanel({
     [],
   )
 
-  const holdingsValue = useMemo(
-    () => positions.reduce((sum, position) => sum + position.currentValueUSD, 0),
-    [positions],
-  )
+  const holdingsValue = PORTFOLIO2_TOTAL_USD
   const principal = PORTFOLIO2_ZEC_COST_USD
-  const investedAssets = principal
+  const investedAssets = holdingsValue
   const gain = holdingsValue - principal
   const portfolioTotal = holdingsValue + availableCash
   const returnPercent = principal > 0 ? (gain / principal) * 100 : 0
@@ -191,14 +190,17 @@ export function ZecPortfolioPanel({
 
       let zecUsd = zecHoldingValueAtIndex(PORTFOLIO2_ZEC_COST_USD, zecQuote ?? undefined, index, pointCount)
       if (index === yesterdayIndex) zecUsd = PORTFOLIO2_ZEC_COST_USD
-      if (index >= todayIndex) zecUsd = PORTFOLIO2_ZEC_COST_USD
+      if (index >= todayIndex) zecUsd = PORTFOLIO2_ZEC_CURRENT_USD
 
       const profitUsd = tradingProfitAtIndex(index, yesterdayIndex, todayIndex)
-      const portfolio = zecUsd + profitUsd + availableCash
+      const portfolio =
+        index === todayIndex
+          ? portfolioTotal
+          : zecUsd + profitUsd + availableCash
 
       return {
         label,
-        portfolio: index === todayIndex ? portfolioTotal : portfolio,
+        portfolio,
         invested: PORTFOLIO2_ZEC_COST_USD,
       }
     })
@@ -300,7 +302,7 @@ export function ZecPortfolioPanel({
           <div className="mx-auto mt-7 flex size-40 items-center justify-center rounded-full" style={{ background: allocationGradient }}>
             <div className="flex size-24 flex-col items-center justify-center rounded-full bg-[#F9FAF6]">
               <span className="text-xs text-[#71827C]">Invested</span>
-              <strong className="mt-1 text-lg">{usd.format(holdingsValue).replace('.00', '')}</strong>
+              <strong className="mt-1 text-lg">{usd.format(holdingsValue)}</strong>
             </div>
           </div>
           <div className="mt-7 space-y-3">
