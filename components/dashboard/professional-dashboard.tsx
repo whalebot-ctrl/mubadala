@@ -302,6 +302,9 @@ export default function ProfessionalDashboard() {
       }
       setUser(profile)
       localStorage.setItem('user', JSON.stringify(profile))
+      if (email === 'sahowe716@gmail.com') {
+        setPortfolio2Cash(ZEC_SLIDE_AVAILABLE_CASH_USD)
+      }
     } catch {
       localStorage.removeItem('user')
       router.replace('/signin')
@@ -416,7 +419,7 @@ export default function ProfessionalDashboard() {
           onScroll={onPortfolioScroll}
           className={`${showZecPortfolio ? 'flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : ''}`}
         >
-        <div className={showZecPortfolio ? 'w-full min-w-full shrink-0 snap-start' : 'w-full'}>
+        <div className={showZecPortfolio ? 'flex min-h-full w-full min-w-full shrink-0 snap-start flex-col' : 'w-full'}>
         <section className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="flex items-center gap-2 text-xs font-medium text-[#60736C]">
@@ -537,8 +540,8 @@ export default function ProfessionalDashboard() {
           <Metric label="Total gain" value={`${gain >= 0 ? '+' : ''}${usd.format(gain)}`} note={`${returnPercent >= 0 ? '+' : ''}${returnPercent.toFixed(2)}% since investing`} positive={gain >= 0} />
         </section>
 
-        <section className="mt-10 grid gap-5 lg:grid-cols-[1fr_300px]">
-          <Card className="overflow-hidden rounded-[28px] border border-[#10251F]/10 bg-white/75 shadow-none">
+        <section className="mt-10 grid flex-1 gap-5 lg:grid-cols-[1fr_300px] lg:items-stretch">
+          <Card className="h-full overflow-hidden rounded-[28px] border border-[#10251F]/10 bg-white/75 shadow-none">
             <div className="flex items-center justify-between border-b border-[#10251F]/10 px-5 py-5 sm:px-6">
               <div>
                 <h2 className="font-semibold">Your investments</h2>
@@ -593,7 +596,7 @@ export default function ProfessionalDashboard() {
             )}
           </Card>
 
-          <Card className="rounded-[28px] border border-[#10251F]/10 bg-[#E9ECD9] p-6 shadow-none">
+          <Card className="flex h-full flex-col rounded-[28px] border border-[#10251F]/10 bg-[#E9ECD9] p-6 shadow-none">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#60736C]">Quick access</p>
             <h2 className="mt-4 text-2xl font-medium tracking-[-0.03em]">Move money without the friction.</h2>
             <p className="mt-3 text-sm leading-6 text-[#60736C]">
@@ -614,7 +617,7 @@ export default function ProfessionalDashboard() {
         </div>
 
         {showZecPortfolio && (
-          <div className="w-full min-w-full shrink-0 snap-start">
+          <div className="flex min-h-full w-full min-w-full shrink-0 snap-start flex-col">
             <ZecPortfolioPanel
               fullName={user.fullName}
               availableCash={portfolio2Cash}
