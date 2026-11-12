@@ -6,18 +6,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Disable SWC minification to reduce build-time Wasm memory usage
-  swcMinify: false,
-  // Disable WebAssembly compilation in Webpack
-  webpack: (config) => {
-    config.experiments = {
-      ...config.experiments,
-      asyncWebAssembly: false,
-      syncWebAssembly: false,
-    };
-    return config;
-  },
+  // Next.js 16 uses Turbopack for `next build` by default (Vercel included).
+  turbopack: {},
   allowedDevOrigins: ['192.168.0.149'],
-};
+}
 
-export default nextConfig; 
+export default nextConfig
