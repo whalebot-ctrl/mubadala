@@ -6,8 +6,18 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // In Next.js 16, this is now a stable top-level option
+  // Disable SWC minification to reduce build-time Wasm memory usage
+  swcMinify: false,
+  // Disable WebAssembly compilation in Webpack
+  webpack: (config) => {
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: false,
+      syncWebAssembly: false,
+    };
+    return config;
+  },
   allowedDevOrigins: ['192.168.0.149'],
-}
+};
 
-export default nextConfig
+export default nextConfig;
